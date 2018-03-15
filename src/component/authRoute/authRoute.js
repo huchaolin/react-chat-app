@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
+
 @withRouter
 class AuthRoute extends Component {
     componentDidMount() {
@@ -26,9 +27,7 @@ class AuthRoute extends Component {
             });
     }
     render() {
-        return (<div>
-            路由判断
-        </div>)
+        return null;
     }
 };
 export default AuthRoute;
