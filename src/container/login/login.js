@@ -2,32 +2,24 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 import {WingBlank, WhiteSpace, Button, List, InputItem} from 'antd-mobile';
-
 import {handleLogin} from '../../redux/user.redux';
 import AppLogo from '../../component/appLogo/appLogo';
+import WrapForm from '../../component/wrapForm/wrapForm';
 
 @connect(state => state, {handleLogin})
+@WrapForm
 class Login extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            user:'',
-            pwd:''
-        };
         this.handleLogin = this.handleLogin.bind(this);
-        this.handleRegister = this. handleRegister.bind(this);
+        this.handleRegister = this.handleRegister.bind(this);
     }
     handleLogin() {
-        const {user, pwd} = this.state;
+        const {user, pwd} = this.props.state;
         this.props.handleLogin({user, pwd});
     }
     handleRegister() {
         this.props.history.push('/register');
-    }
-    handleChange(key, value) {
-        this.setState({
-            [key]: value
-        });
     }
     render() {
         const redirectTo = this.props.user.redirectTo;
@@ -37,10 +29,10 @@ class Login extends Component {
             <WingBlank>
                 <List>
                     <InputItem placeholder="请输入用户名" 
-                        onChange={ v => this.handleChange('user', v)}>用户名
+                        onChange={ v => this.props.handleChange('user', v)}>用户名
                     </InputItem>
                     <InputItem placeholder="请输入密码" type="password" 
-                        onChange={ v => this.handleChange('pwd', v)}>
+                        onChange={ v => this.props.handleChange('pwd', v)}>
                         密码
                     </InputItem>
                 </List>

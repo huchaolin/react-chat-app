@@ -10,16 +10,20 @@ const _filter = {__v: 0, pwd: 0}
 // const utility = require('utility');
 
 userRouter.get('/test', (req, res) => {
-    res.json({test:"test"});
+    User.find({}, _filter, (err, doc) =>{
+        console.log('doc',doc)
+        res.json({code:0, data: doc});
+    })
+    // User.remove({},function(){});
 });
 
 
 userRouter.get('/info', (req, res) => {
     const {userid} = req.cookies;
     if(!userid) {
-        return res.json({code: 1, });
+        return res.json({code: 1});
     } else {
-        User.findOne({_id: userid}, (err, doc) => {
+        User.findOne({_id: userid}, _filter, (err, doc) => {
             if(err) {
                 return res.json({code:1, msg: '后端出错'});
             };
@@ -55,11 +59,29 @@ userRouter.post('/register', (req, res)=> {
                     return res.json({code:1, msg: "后端出错"});
                 } else {
                     res.cookie('userid', doc._id);
-                    return res.json({code:0, data: doc});
+                    const {_id, user, type} = doc;
+                    return res.json({code:0, data: {_id, user, type}});
                 };
             });
         };
     });
+});
+
+userRouter.post('/update', (req, res)=> {
+    const {userid} = req.cookies;
+    if(!userid) {
+        return res.json({code:1});
+    } else {
+        User.findByIdAndUpdate(userid, req.body, (err, doc) => {
+            if (err) {
+                return res.json({code: 1, msg: "后端出错"})
+            };
+            const {user, type} = doc;
+            const data = {user, type, ...req.body};
+            return res.json({code: 0, data});
+
+        })
+    }    
 });
 //密码简单加密函数
 // function md5Pwd(pwd) {

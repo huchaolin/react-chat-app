@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {Toast} from 'antd-mobile';
-import {getRedirectPath, getRedicretPath} from '../utils';
+import {getRedirectPath} from '../utils';
 
 //action
 const AUTH_SUCCESS = 'AUTH_SUCCESS';
@@ -16,7 +16,7 @@ const INIT_STATE = {
 export function user(state = INIT_STATE, action) {
     switch(action.type) {
         case AUTH_SUCCESS:
-            return  {...state, ...action.payload, redirectTo: getRedicretPath(action.payload), msg:''};
+            return  {...state, ...action.payload, redirectTo: getRedirectPath(action.payload), msg:''};
         case ERR_MSG:
             return {...state, msg: action.msg};
         default:
@@ -72,3 +72,21 @@ export function handleRegister(data) {
         })
     }
 };
+
+export function update(data) {
+    const {avatar} = data; 
+    if(!avatar) {
+        return errorMsg("请选择头像");
+    }
+    return dispatch => {
+        axios.post('/user/update', data)
+            .then(res => {
+                if (res.status === 200 && res.data.code === 0) {
+                    dispatch(authSuccess(res.data.data));
+                }
+                else {
+                    dispatch(errorMsg(res.data.msg));
+                }
+            })
+    }
+}
