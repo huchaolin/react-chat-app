@@ -10,8 +10,9 @@ import Register from './container/register/register';
 import AuthRoute from './component/authRoute/authRoute';
 import BossInfo from './container/bossInfo/bossInfo';
 import GeniusInfo from './container/geniusInfo/geniusInfo';
+import Desk from './container/desk/desk';
 
-// import './index.css';
+import './index.css';
 import './config';
 
 const store = createStore(reducers, compose(
@@ -27,9 +28,9 @@ class App extends Component {
                 <div>
                     <AuthRoute></AuthRoute>
                     <Switch>
-                        {/* <Route path='/boss' component={Boss}></Route> */}
                         <Route path='/bossinfo' component={BossInfo}></Route>
                         <Route path='/geniusinfo' component={GeniusInfo}></Route>
+                        <Route path='/desk' component={Desk}></Route>
                         <Route path='/login' component={Login}></Route>
                         <Route path='/register' component={Register}></Route>
                     </Switch>

@@ -76,8 +76,8 @@ userRouter.post('/update', (req, res)=> {
             if (err) {
                 return res.json({code: 1, msg: "后端出错"})
             };
-            const {user, type} = doc;
-            const data = {user, type, ...req.body};
+            const {user, type, avatar, _id} = doc;
+            const data = {user, type, avatar, _id, ...req.body};
             return res.json({code: 0, data});
 
         })

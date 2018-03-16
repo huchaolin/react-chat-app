@@ -27,7 +27,6 @@ export function user(state = INIT_STATE, action) {
 function authSuccess(data) {
     return {type: AUTH_SUCCESS, payload: data};
 };
-
 function errorMsg(msg) {
     msg ? Toast.info(`${msg}`, 2) : null;
     return {msg, type: ERR_MSG};
@@ -88,5 +87,11 @@ export function update(data) {
                     dispatch(errorMsg(res.data.msg));
                 }
             })
+    }
+};
+
+export function loadData(data) {
+    return dispatch => {
+        return dispatch(authSuccess(data));
     }
 }
