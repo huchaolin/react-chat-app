@@ -2,7 +2,7 @@ import axios from 'axios';
 import {Toast} from 'antd-mobile';
 
 const initState = {
-    userList: null,
+    list: null,
     msg: ''
 };
 //action

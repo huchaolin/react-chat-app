@@ -77,7 +77,6 @@ export function handleRegister(data) {
 
 export function update(data) {
     const {avatar} = data; 
-    debugger
     if(!avatar) {
         return errorMsg("请选择头像");
     };
