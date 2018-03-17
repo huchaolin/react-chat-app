@@ -16,7 +16,8 @@ class Register extends Component {
         this.handleRegister = this.handleRegister.bind(this);
     }
     handleRegister() {
-        this.props.handleRegister(this.props.state);
+        const {user, pwd, pwd2, type} = this.props.state;
+        this.props.handleRegister({user, pwd, pwd2, type});
     }
     render() { 
         const redirectTo = this.props.user.redirectTo;

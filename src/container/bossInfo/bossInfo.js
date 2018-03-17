@@ -9,18 +9,23 @@ import CompleteInfo from '../../component/completeInfo/completeInfo';
 @connect( state => state, {update})
 @WrapForm
 class BossInfo extends Component {
+    handleUpdate = () => {
+        const {avatar, company, job, money, desc} = this.props.state;
+        this.props.update({avatar, company, job, money, desc});
+    }
     render() {
         const redirectTo = this.props.user.redirectTo;
+
         return (<List>
             {redirectTo && (redirectTo !== '/bossinfo') ? <Redirect to={redirectTo}></Redirect> : null}
                     <NavBar
                         mode="dark"
                         >BOSS信息完善页
                     </NavBar>
-                    <CompleteInfo {...this.props} isBoss={true} />
+                    <CompleteInfo handleChange={this.props.handleChange} isBoss={true} />
                     <WingBlank> 
                         <Button
-                                onClick={() => {this.props.update(this.props.state)}} 
+                                onClick={this.handleUpdate} 
                                 type="primary">保存</Button>
                     </WingBlank>
                 </List>)

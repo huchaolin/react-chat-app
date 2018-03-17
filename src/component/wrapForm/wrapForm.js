@@ -4,8 +4,10 @@ function  WrapForm(Comp) {
     return class WrapForm extends Component {
         constructor(props) {
             super(props);
-            this.state = {type: 'boss'};
             this.handleChange = this.handleChange.bind(this);
+            this.state={
+                type:''
+            }
         }   
         handleChange(key,val){
 			this.setState({

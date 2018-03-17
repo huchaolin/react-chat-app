@@ -83,6 +83,21 @@ userRouter.post('/update', (req, res)=> {
         })
     }    
 });
+
+userRouter.get('/list', (req, res) => {
+    const {userid} = req.cookies;
+    const {type} = req.query;
+    if(!userid) {
+        return res.json({code: 1, msg: '未保存登录信息'});
+    } else {
+        User.find({type}, _filter, (err, doc) => {
+            if(err) {
+                return res.json({code:1, msg: '后端出错'});
+            };
+            return  res.json({code:0, data: doc});
+        })
+    }
+});
 //密码简单加密函数
 // function md5Pwd(pwd) {
 //     const salt = 'sfnkjdsg_wqr917463265%……%&*197GFYAGK@4362988723em￥……%%&';

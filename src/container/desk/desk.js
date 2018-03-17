@@ -4,20 +4,15 @@ import {NavBar} from 'antd-mobile';
 import {Switch, Route} from 'react-router-dom';
 import NavTabBar from '../../component/navTabBar/navTabBar';
 import {Redirect} from 'react-router-dom';
+import UserList from '../../component/userList/userList';
+// import BossList from '../../component/bossList/bossList';
+// import GeniusList from '../../component/geniusList/geniusList';
 // import {getMsgList,recvMsg} from '../../redux/chat.redux'
 
 
 function Msg() {
     return (<div>
         消息页面
-    </div>)
-};function BossList() {
-    return (<div>
-        Boss列表
-    </div>)
-};function GeniusList() {
-    return (<div>
-        牛人列表
     </div>)
 };function Profile() {
     return (<div>
@@ -27,7 +22,7 @@ function Msg() {
 
 
 @connect(
-    state=>state,
+    state => state,
     null
 )
 class Desk extends Component {
@@ -40,6 +35,7 @@ class Desk extends Component {
     initPath() {
         const {type} = this.props.user;
         const {pathname} = this.props.location;
+        console.log('type', type)
         if(pathname == '/desk') {
             if(type == 'boss') {
                 return this.props.history.push('/desk/geniuslist');
@@ -58,7 +54,7 @@ class Desk extends Component {
                     icon: 'boss',
                     iconText: '牛人',
                     navTitle: '牛人列表',
-                    component: GeniusList,
+                    component: UserList,
                     hide: this.props.user.type !== 'boss'
                 },
                 {
@@ -66,7 +62,7 @@ class Desk extends Component {
                     icon: 'job',
                     iconText: 'Boss',
                     navTitle: 'Boss列表',
-                    component: BossList,
+                    component: UserList,
                     hide: this.props.user.type == 'boss'
                 },
                 {

@@ -22,7 +22,7 @@ export function user(state = INIT_STATE, action) {
         default:
             return state;
     }
-}
+};
 //action creater
 function authSuccess(data) {
     return {type: AUTH_SUCCESS, payload: data};
@@ -54,10 +54,13 @@ export function handleRegister(data) {
     const {user, pwd, pwd2, type} = data;
     if(!user || !pwd || !pwd2) {
         return errorMsg('用户名或密码未填写');
-    }
+    };
     if (pwd !== pwd2) {
         return errorMsg('两次密码不一致');
-    }
+    };
+    if(!type) {
+        return errorMsg("请选择身份");
+    };
     //异步请求axios
     return dispatch => {
     axios.post('/user/register', {user, pwd, type})
@@ -74,9 +77,10 @@ export function handleRegister(data) {
 
 export function update(data) {
     const {avatar} = data; 
+    debugger
     if(!avatar) {
         return errorMsg("请选择头像");
-    }
+    };
     return dispatch => {
         axios.post('/user/update', data)
             .then(res => {

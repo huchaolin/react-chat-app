@@ -9,6 +9,10 @@ import CompleteInfo from '../../component/completeInfo/completeInfo';
 @connect( state => state, {update})
 @WrapForm
 class GeniusInfo extends Component {
+    handleUpdate = () => {
+        const {avatar, job, desc} = this.props.state;
+        this.props.update({avatar, job, desc});
+    }
     render() {
         const redirectTo = this.props.user.redirectTo;
         return (<List>
@@ -17,13 +21,14 @@ class GeniusInfo extends Component {
                         mode="dark"
                         >牛人信息完善页
                     </NavBar>
-                    <CompleteInfo {...this.props} isBoss={false} />
+                    <CompleteInfo handleChange={this.props.handleChange} isBoss={false} />
                     <WingBlank> 
                         <Button
-                                onClick={() => {this.props.update(this.props.state)}} 
+                                onClick={this.handleUpdate} 
                                 type="primary">保存</Button>
                     </WingBlank>
                 </List>)
     }
 }
 export default GeniusInfo;
+
