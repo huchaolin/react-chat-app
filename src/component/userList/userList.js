@@ -1,18 +1,16 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {getUserList} from '../../redux/userList.redux';
-import {createChatId} from '../../redux/chat.redux';
 import {Card, WingBlank, WhiteSpace} from 'antd-mobile';
 
-@connect(state => state, {getUserList, createChatId})
+@connect(state => state, {getUserList})
 class UserList extends Component {
     componentDidMount() {
         const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
         this.props.getUserList(type);
     }
     handleClick(v) {
-        this.props.history.push(`/chatwith${v.user}`);
-        this.props.createChatId(this.props.user._id, v._id);
+        this.props.history.push(`/chat-to/${v._id}`);
     }
     render() {
         const Header = Card.Header;

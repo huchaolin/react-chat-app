@@ -11,7 +11,7 @@ import AuthRoute from './component/authRoute/authRoute';
 import BossInfo from './container/bossInfo/bossInfo';
 import GeniusInfo from './container/geniusInfo/geniusInfo';
 import Desk from './container/desk/desk';
-
+import Chat from './container/chat/chat';
 import './index.css';
 import './config';
 
@@ -31,6 +31,7 @@ class App extends Component {
                         <Route path='/bossinfo' component={BossInfo}></Route>
                         <Route path='/geniusinfo' component={GeniusInfo}></Route>
                         <Route path='/desk' component={Desk}></Route>
+                        <Route path='/chat-to/:userid' component={Chat}></Route>
                         <Route path='/login' component={Login}></Route>
                         <Route path='/register' component={Register}></Route>
                     </Switch>
