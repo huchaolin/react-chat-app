@@ -6,9 +6,8 @@ const socket = io('ws://localhost:9093');
 
 //action
 //receive message
-const GET_MSG = 'GET_MSG';
 const RCV_MSG = 'RCV_MSG';
-const UPDATE_READ = 'UPDATE_READ';
+const UPDATE_MSG = 'UPDATE_MSG';
 const ERR_MSG = 'ERR_MSG';
 //initState
 const initState = {
@@ -18,12 +17,10 @@ const initState = {
 //reducer
 export function chat(state = initState, action) {
     switch(action.type) {
-        case GET_MSG:
-            return {...state, msgs: [...action.payload]};
+        case UPDATE_MSG:
+            return {...state, msgs: action.payload};
         case RCV_MSG:
             return {...state, msgs: [...state.msgs, action.payload]} ;
-        case UPDATE_READ:
-            return {...state, msgs: action.payload};
         case ERR_MSG:
             return {error:action.payload};
         default:
@@ -37,14 +34,11 @@ function receiveMsg(msg) {
     return {type: RCV_MSG, payload: msg}
 };
 
-function getMsgs(msgs) {
-    return {type: GET_MSG, payload: msgs}
+function updateMsg(msgs) {
+    return {type: UPDATE_MSG, payload: msgs}
 };
 
 
-function updateRead(msgs) {
-    return {tyep: UPDATE_READ, payload: msgs}
-};
 function errorMsg(msg) {
     msg ? Toast.info(`${msg}`, 2) : null;
     return {payload: msg, type: ERR_MSG};
@@ -55,7 +49,7 @@ export function getMessages() {
         axios.get('/user/chatmsgs')
         .then(res => {
             if (res.status === 200 && res.data.code === 0) {
-                return dispatch(getMsgs(res.data.data))
+                return dispatch(updateMsg(res.data.data))
             } else {
                 return dispatch(errorMsg(res.data.msg));
             }
@@ -97,16 +91,20 @@ export function startListen() {
     }
 };
 
-export function updateReadMsg(to_id) {
+export function updateReadMsg(chat_to_id) {
     return (dispatch, getState) => {
         const userid = getState().user._id;
-        const chatid = [userid, to_id].sort().join('');
+        const chatid = [userid, chat_to_id].sort().join('');
         const msgs = getState().chat.msgs.map(v => {
-            if(v.chatid == chatid && v.from !== userid) {
-                v.isRead = true;
+            if(v.chatid == chatid && v.from == chat_to_id) {
+                if(v.isRead == false) {
+                    v.isRead = true;
+                    //向后端更新isRead状态
+                    axios.post('/user/update/readmsgs', {updateRead: v}).then(res => console.log('redmsg-res',res))
+                }
             };
             return v;
         });
-        dispatch(updateRead(msgs));
+        dispatch(updateMsg(msgs))
     }
 } 

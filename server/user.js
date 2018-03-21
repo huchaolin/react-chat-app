@@ -16,6 +16,7 @@ userRouter.get('/test', (req, res) => {
         res.json({code:0, data: doc});
     })
     // User.remove({},function(){});
+    // Chat.remove({}, function(){});
 });
 
 
@@ -82,6 +83,23 @@ userRouter.post('/update', (req, res)=> {
             const data = {user, type, avatar, _id, ...req.body};
             return res.json({code: 0, data});
 
+        })
+    }    
+});
+userRouter.post('/update/readmsgs', (req, res)=> {
+    const {userid} = req.cookies;
+    const {updateRead} = req.body;
+    if(!userid) {
+        return res.json({code:1, msg: '未保存登录信息'});
+    } else {
+        console.log('req.body', req.body)
+        Chat.findByIdAndUpdate(updateRead._id, updateRead, (err, doc) => {
+            if (err) {
+                return res.json({code: 1, msg: "后端出错"})
+            };
+            const {user, type, avatar, _id} = doc;
+            const data = {user, type, avatar, _id, ...req.body};
+            return res.json({code: 0, data});
         })
     }    
 });

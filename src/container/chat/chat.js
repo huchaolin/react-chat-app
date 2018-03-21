@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import { NavBar, Icon, List, InputItem, Button} from 'antd-mobile';
 import {connect} from 'react-redux';
 import moment from 'moment';
-import {handleSubmit, startListen} from '../../redux/chat.redux';
+import {handleSubmit, startListen, updateReadMsg} from '../../redux/chat.redux';
 import './chat.css';
 
-@connect(state => state, {handleSubmit, startListen})
+@connect(state => state, {handleSubmit, startListen, updateReadMsg})
 class Chat extends Component {
     constructor(props) {
         super(props);
@@ -20,11 +20,16 @@ class Chat extends Component {
         if(this.props.chat.msgs.length < 1) {
             this.props.startListen();    
         };   
+        console.log('更新已读消息')
+        this.props.updateReadMsg(this.props.match.params.userid);
+        
     }
     componentDidMount() {
         if(this.props.chat.msgs.length < 1) {
             this.props.startListen();    
         };
+        console.log('重新渲染加载新消息')
+        
     }
     handleInput(v) {
         this.setState({
@@ -99,7 +104,7 @@ class Chat extends Component {
     render() {
         const to_id = this.props.match.params.userid;
         const users = this.props.userList.usersBook;
-        
+
         if(Object.keys(users).length === 0) {
             return null;
         };

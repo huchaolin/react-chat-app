@@ -13,10 +13,13 @@ class NavTabBar extends Component {
     }
     render() {
         const navList = this.props.data.filter(v => !v.hide);
+        const userid = this.props.user._id;
         const {pathname}= this.props.location;
         let unReadNum = 0;
         this.props.chat.msgs.forEach(v => {
-            !v.isRead ? unReadNum++ : null;
+            if(v.from !== userid) {
+                !v.isRead ? unReadNum++ : null;
+            }
         });
         return (
             <TabBar>
