@@ -2,18 +2,19 @@ import axios from 'axios';
 import {Toast} from 'antd-mobile';
 
 const initState = {
-    list: null,
+    list: [],
     msg: ''
 };
 //action
 const USER_LIST = 'USER_LIST';
 const ERR_MSG = 'ERR_MSG';
 
+
 //reducer 
 export function userList(state = initState, action) {
     switch (action.type) {
         case USER_LIST:
-            return {...state, list: action.payload, msg: ''};
+            return {...state, list: action.payload, usersBook: getUsersBook(action.payload), msg: ''};
         case ERR_MSG:
             return {...state, msg: action.msg}
         default:
@@ -41,4 +42,18 @@ export function getUserList(type) {
                 }
 			})
 	}
+};
+
+
+ //用户字典
+ function getUsersBook(list) {
+    console.log('userList',list)
+    let usersBook = {};
+    if(list.length > 0) {
+        console.log('userList',list)
+        list.forEach(v => {
+            usersBook[v._id] = v;
+        }) 
+        return usersBook;
+    }
 }

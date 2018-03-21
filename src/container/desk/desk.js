@@ -3,18 +3,15 @@ import {connect} from 'react-redux';
 import {NavBar} from 'antd-mobile';
 import {Switch, Route} from 'react-router-dom';
 import NavTabBar from '../../component/navTabBar/navTabBar';
+import MsgList from '../../component/msgList/msgList';
 import {Redirect} from 'react-router-dom';
 import UserList from '../../component/userList/userList';
-// import BossList from '../../component/bossList/bossList';
-// import GeniusList from '../../component/geniusList/geniusList';
-// import {getMsgList,recvMsg} from '../../redux/chat.redux'
+import {startListen, getMessages} from '../../redux/chat.redux';
+import {getUserList} from '../../redux/userList.redux';
+import './desk.css';
 
 
-function Msg() {
-    return (<div>
-        消息页面
-    </div>)
-};function Profile() {
+function Profile() {
     return (<div>
        个人中心
     </div>)
@@ -23,13 +20,24 @@ function Msg() {
 
 @connect(
     state => state,
-    null
+    {startListen, getMessages, getUserList}
 )
 class Desk extends Component {
+    constructor(props) {
+        super(props);
+       
+    }
     componentDidMount(){
-		// if (!this.props.chat.chatmsg.length) {
-		// 	this.props.getMsgList()
-        // 	this.props.recvMsg()
+        console.log('加载DESK')
+        if(this.props.chat.msgs.length < 1) {
+            this.props.getMessages();
+            this.props.startListen();    
+        };   
+       if(this.props.userList.list.length == 0) {
+            const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
+            this.props.getUserList(type);
+            console.log('获取usersList')
+        };
         this.initPath();
     }
     initPath() {
@@ -66,11 +74,11 @@ class Desk extends Component {
                     hide: this.props.user.type == 'boss'
                 },
                 {
-                    path: '/desk/msg',
+                    path: '/desk/msglist',
                     icon: 'msg',
                     iconText: '消息',
                     navTitle: '消息列表',
-                    component: Msg
+                    component: MsgList
                 },
                 {
                     path: '/desk/me',
@@ -82,8 +90,10 @@ class Desk extends Component {
             ];
             return (
             <div>
-                <NavBar>{navList.find( v => (v.path == pathname)) ? navList.find( v => (v.path == pathname)).navTitle : null}</NavBar>
-                <div>
+                <div className='desk-head'>
+                     <NavBar>{navList.find( v => (v.path == pathname)) ? navList.find( v => (v.path == pathname)).navTitle : null}</NavBar>
+                </div>
+                <div className='desk-body'>
                     <Switch>
                         {navList.map(v=>(
                             <Route key={v.path} path={v.path} component={v.component}></Route>

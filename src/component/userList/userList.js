@@ -2,21 +2,21 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {getUserList} from '../../redux/userList.redux';
 import {Card, WingBlank, WhiteSpace} from 'antd-mobile';
+import { Object } from 'core-js';
 
 @connect(state => state, {getUserList})
 class UserList extends Component {
-    componentDidMount() {
-        const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
-        this.props.getUserList(type);
-    }
     handleClick(v) {
         this.props.history.push(`/chat-to/${v._id}`);
     }
     render() {
         const Header = Card.Header;
         const Body = Card.Body;
+        if (!this.props.userList.list) {
+            return null
+        }
         //过滤出已完善个人信息的用户
-        const userList = this.props.userList.list ? this.props.userList.list.filter( v => v.avatar) : null;
+        const userList = this.props.userList.list.filter(v => v.avatar);
         return (
             <WingBlank>
 			    <WhiteSpace />

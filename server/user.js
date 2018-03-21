@@ -4,6 +4,7 @@ const userRouter = express.Router();
 //引入mogoose的model;
 const model = require('./model');
 const User = model.getModel('user');
+const Chat = model.getModel('chat');
 //设置查找的过滤条件,返回的doc将不包含以下设置属性
 const _filter = {__v: 0, pwd: 0}
 //密码简单加密,使密码不明文存储
@@ -16,6 +17,7 @@ userRouter.get('/test', (req, res) => {
     })
     // User.remove({},function(){});
 });
+
 
 
 userRouter.get('/info', (req, res) => {
@@ -91,6 +93,21 @@ userRouter.get('/list', (req, res) => {
         return res.json({code: 1, msg: '未保存登录信息'});
     } else {
         User.find({type}, _filter, (err, doc) => {
+            if(err) {
+                return res.json({code:1, msg: '后端出错'});
+            };
+            return  res.json({code:0, data: doc});
+        })
+    }
+});
+
+
+userRouter.get('/chatmsgs', (req, res) => {
+    const {userid} = req.cookies;
+    if(!userid) {
+        return res.json({code: 1, msg: '未保存登录信息'});
+    } else {
+        Chat.find({'$or': [{from:userid},{to:userid}]}, _filter, (err, doc) => {
             if(err) {
                 return res.json({code:1, msg: '后端出错'});
             };

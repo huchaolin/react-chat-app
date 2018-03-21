@@ -28,8 +28,8 @@ const models = {
 		from: {type: String,require: true},
 		to: {type: String, require: true},
 		isRead: {type: Boolean, default: false},
-		content: {type: String, require: true, default:''},
-		create_time: {type:Number, default: Date.now}
+		msg: {type: String, require: true, default:''},
+		date: {type:Number, default: Date.now}
 	}
 }
 //创建model
