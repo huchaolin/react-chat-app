@@ -31,8 +31,10 @@ function updateUserList(data) {
     return {type: USER_LIST, payload: data}
 };
 
-export function getUserList(type) {
-	return dispatch=>{
+export function getUserList() {
+	return (dispatch, getState)=>{
+        const type = getState().user.type == 'boss' ? 'genius' : 'boss'; 
+        console.log('userlist-type',type)
 		axios.get(`/user/list?type=${type}`)
 			.then(res => {
 				if (res.status === 200 && res.data.code === 0) {

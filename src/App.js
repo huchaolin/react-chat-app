@@ -1,6 +1,5 @@
 import React, {Component}from 'react';
 import ReactDOM from 'react-dom';
-import {connect} from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import {createStore, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
@@ -13,7 +12,7 @@ import BossInfo from './container/bossInfo/bossInfo';
 import GeniusInfo from './container/geniusInfo/geniusInfo';
 import Desk from './container/desk/desk';
 import Chat from './container/chat/chat';
-
+import {connect} from 'react-redux';
 import {startListen, getMessages} from './redux/chat.redux';
 import {getUserList} from './redux/userList.redux';
 import './index.css';
@@ -24,16 +23,18 @@ import './config';
     {startListen, getMessages, getUserList}
 )
 class App extends Component {
-    componentDidMount() {
-        if(this.props.chat.msgs.length < 1) {
-            this.props.getMessages();
-            this.props.startListen();    
-        };   
-       if(this.props.userList.list.length == 0) {
-            const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
-            this.props.getUserList(type);
-            console.log('获取usersList')
-        };
+    componentWillReceiveProps(nextProps) {
+        console.log('nextProps',nextProps)
+        //防止刷新之后数据没有了
+        if(nextProps.user._id) {
+            if(nextProps.chat.msgs.length == 0 ) {
+                nextProps.getMessages();
+                nextProps.startListen();    
+            };   
+            if(nextProps.userList.list.length == 0) {
+                nextProps.getUserList();
+            };
+        }
     }
 
     render() {

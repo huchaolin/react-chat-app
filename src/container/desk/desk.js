@@ -25,25 +25,27 @@ function Profile() {
 class Desk extends Component {
     constructor(props) {
         super(props);
-       
     }
     componentDidMount(){
-    //     console.log('加载DESK')
-    //     if(this.props.chat.msgs.length < 1) {
-    //         this.props.getMessages();
-    //         this.props.startListen();    
-    //     };   
-    //    if(this.props.userList.list.length == 0) {
-    //         const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
-    //         this.props.getUserList(type);
-    //         console.log('获取usersList')
-    //     };
-        this.initPath();
+        // this.initPath();
+    }
+    componentWillReceiveProps(nextProps) {
+        const {type} = nextProps.user;
+        if(!type) { return null};
+        const {pathname} = nextProps.location;
+        if(pathname == '/desk') {
+            if(type == 'boss') {
+                return this.props.history.push('/desk/geniuslist');
+            };
+            if(type == 'genius') {
+                return this.props.history.push('/desk/bosslist');
+            };
+        }
     }
     initPath() {
         const {type} = this.props.user;
         const {pathname} = this.props.location;
-        console.log('type', type)
+        debugger
         if(pathname == '/desk') {
             if(type == 'boss') {
                 return this.props.history.push('/desk/geniuslist');
@@ -101,7 +103,7 @@ class Desk extends Component {
                     </Switch>
 				</div>
                 <div className="desk-footer">
-                    <NavTabBar  data={navList}></NavTabBar>
+                    <NavTabBar  navList={navList}></NavTabBar>
                 </div>
             </div>
         )

@@ -24,7 +24,13 @@ class MsgList extends Component {
         console.log('msg-msgs',msgs)
         const msgsBook = {};
         console.log('msg-msgsBook',msgsBook)
-        if(msgs.length == 0) {return null};
+        if(!users || msgs.length == 0) {
+            console.log('msg-未获得需要数据，返回空白')
+            return null
+            
+        };
+        console.log('msg-继续渲染')
+        
         msgs.map(v => {
             if(v.from !== userid) {
                     msgsBook[v.from] = msgsBook[v.from] ? [...msgsBook[v.from], v] : [v];

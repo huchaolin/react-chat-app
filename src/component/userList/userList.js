@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {getUserList} from '../../redux/userList.redux';
 import {Card, WingBlank, WhiteSpace} from 'antd-mobile';
 import { Object } from 'core-js';
 
-@connect(state => state, {getUserList})
+@connect(state => state, null)
 class UserList extends Component {
     handleClick(v) {
         this.props.history.push(`/chat-to/${v._id}`);
@@ -12,7 +11,7 @@ class UserList extends Component {
     render() {
         const Header = Card.Header;
         const Body = Card.Body;
-        if (!this.props.userList.list) {
+        if (this.props.userList.list.length == 0) {
             return null
         }
         //过滤出已完善个人信息的用户

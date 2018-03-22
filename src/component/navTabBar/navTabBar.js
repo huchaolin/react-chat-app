@@ -9,14 +9,16 @@ import {connect} from 'react-redux';
 class NavTabBar extends Component {
     static propTypes = {
         //属性检测，有利于提前检测出错误
-        data: PropTypes.array.isRequired
+        navList : PropTypes.array.isRequired
     }
     render() {
-        const navList = this.props.data.filter(v => !v.hide);
+        const navList = this.props.navList.filter(v => !v.hide);
         const userid = this.props.user._id;
         const {pathname}= this.props.location;
         let unReadNum = 0;
-        this.props.chat.msgs.forEach(v => {
+        const msgs =  this.props.chat.msgs;
+        if(!msgs || msgs.length ==  0) {return null};
+        msgs.forEach(v => {
             if(v.from !== userid) {
                 !v.isRead ? unReadNum++ : null;
             }
