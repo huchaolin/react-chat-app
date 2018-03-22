@@ -12,6 +12,7 @@ import BossInfo from './container/bossInfo/bossInfo';
 import GeniusInfo from './container/geniusInfo/geniusInfo';
 import Desk from './container/desk/desk';
 import Chat from './container/chat/chat';
+import App from './App';
 import './index.css';
 import './config';
 
@@ -20,26 +21,14 @@ const store = createStore(reducers, compose(
 	window.devToolsExtension ? window.devToolsExtension() : f=>f
 ));
 
-class App extends Component {
+class Index extends Component {
     render() { 
         return (
         <Provider store={store}>
-            <BrowserRouter>
-                <div>
-                    <AuthRoute></AuthRoute>
-                    <Switch>
-                        <Route path='/bossinfo' component={BossInfo}></Route>
-                        <Route path='/geniusinfo' component={GeniusInfo}></Route>
-                        <Route path='/desk' component={Desk}></Route>
-                        <Route path='/chat-to/:userid' component={Chat}></Route>
-                        <Route path='/login' component={Login}></Route>
-                        <Route path='/register' component={Register}></Route>
-                    </Switch>
-                </div>
-            </BrowserRouter>
+            <App />
         </Provider>
     )}
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Index />, document.getElementById('root'));
 

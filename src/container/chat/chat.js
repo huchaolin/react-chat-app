@@ -17,12 +17,16 @@ class Chat extends Component {
         this.renderChatContent = this.renderChatContent.bind(this);
     }
     componentWillMount() {
-        if(this.props.chat.msgs.length < 1) {
-            this.props.startListen();    
-        };   
-        console.log('更新已读消息')
-        this.props.updateReadMsg(this.props.match.params.userid);
+        // if(this.props.chat.msgs.length < 1) {
+        //     this.props.startListen();    
+        // };   
         
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
+            console.log('更新已读消息')
+            this.props.updateReadMsg(this.props.match.params.userid);
+        }
     }
     componentDidMount() {
         if(this.props.chat.msgs.length < 1) {
@@ -43,6 +47,7 @@ class Chat extends Component {
         const to = this.props.match.params.userid;
 		const msg = this.state.msg;
         this.props.handleSubmit({from, to, msg});
+        this.setState({msg:''});
     }
     renderChatContent() {
         if(!this.props.chat.msgs.length) {return null};
@@ -105,7 +110,7 @@ class Chat extends Component {
         const to_id = this.props.match.params.userid;
         const users = this.props.userList.usersBook;
 
-        if(Object.keys(users).length === 0) {
+        if(!users || Object.keys(users).length === 0) {
             return null;
         };
         return (<div>    
@@ -121,6 +126,7 @@ class Chat extends Component {
         </div>
         <div className="chat-footer">
             <InputItem
+                value={this.state.msg}
                 placeholder="请输入"
                 onChange={v => this.handleInput(v)}
                 extra={<span onClick={this.handleSubmit}>发送</span>}

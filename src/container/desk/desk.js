@@ -28,16 +28,16 @@ class Desk extends Component {
        
     }
     componentDidMount(){
-        console.log('加载DESK')
-        if(this.props.chat.msgs.length < 1) {
-            this.props.getMessages();
-            this.props.startListen();    
-        };   
-       if(this.props.userList.list.length == 0) {
-            const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
-            this.props.getUserList(type);
-            console.log('获取usersList')
-        };
+    //     console.log('加载DESK')
+    //     if(this.props.chat.msgs.length < 1) {
+    //         this.props.getMessages();
+    //         this.props.startListen();    
+    //     };   
+    //    if(this.props.userList.list.length == 0) {
+    //         const type = this.props.user.type == 'boss' ? 'genius' : 'boss';
+    //         this.props.getUserList(type);
+    //         console.log('获取usersList')
+    //     };
         this.initPath();
     }
     initPath() {
