@@ -42,19 +42,19 @@ class Desk extends Component {
             };
         }
     }
-    initPath() {
-        const {type} = this.props.user;
-        const {pathname} = this.props.location;
-        debugger
-        if(pathname == '/desk') {
-            if(type == 'boss') {
-                return this.props.history.push('/desk/geniuslist');
-            };
-            if(type == 'genius') {
-                return this.props.history.push('/desk/bosslist');
-            };
-        }
-    }
+    // initPath() {
+    //     const {type} = this.props.user;
+    //     const {pathname} = this.props.location;
+    //     debugger
+    //     if(pathname == '/desk') {
+    //         if(type == 'boss') {
+    //             return this.props.history.push('/desk/geniuslist');
+    //         };
+    //         if(type == 'genius') {
+    //             return this.props.history.push('/desk/bosslist');
+    //         };
+    //     }
+    // }
     render() {
         const {type} = this.props.user;
         const {pathname} = this.props.location;
