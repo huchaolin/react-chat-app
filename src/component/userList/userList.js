@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Card, WingBlank, WhiteSpace} from 'antd-mobile';
-import { Object } from 'core-js';
+import './userList.css';
 
 @connect(state => state, null)
 class UserList extends Component {
@@ -16,7 +16,7 @@ class UserList extends Component {
         }
         //过滤出已完善个人信息的用户
         const userList = this.props.userList.list.filter(v => v.avatar);
-        return (
+        return (<div className='userlist'>
             <WingBlank>
 			    <WhiteSpace />
                 {userList ?  userList.map(v => (
@@ -26,7 +26,7 @@ class UserList extends Component {
                         <Header
                             title={v.user}
                             thumb={require(`../avatarSelector/img/${v.avatar}.png`)}
-                            extra={<span>{v.job}</span>}
+                            extra={<span>{v.type == 'boss' ? '招聘职位：' : '应聘职位'}{v.job}</span>}
                         ></Header>
                         <Body>
                             {v.type == 'boss' ? <div>公司:{v.company}</div> : null}
@@ -36,7 +36,8 @@ class UserList extends Component {
                             {v.type=='boss'? <div>薪资:{v.money}</div> :null}
                         </Body>
                     </Card>)) : null}
-            </WingBlank>)
+            </WingBlank>
+            </div>)
     }
 }
 export default UserList;

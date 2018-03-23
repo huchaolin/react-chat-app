@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import { NavBar, Icon, List, InputItem, Button} from 'antd-mobile';
 import {connect} from 'react-redux';
 import moment from 'moment';
-import {handleSubmit, startListen, updateReadMsg} from '../../redux/chat.redux';
+import {handleSubmit,  updateReadMsg} from '../../redux/chat.redux';
 import './chat.css';
+import ListItem from 'antd-mobile/lib/list/ListItem';
 
-@connect(state => state, {handleSubmit, startListen, updateReadMsg})
+@connect(state => state, {handleSubmit, updateReadMsg})
 class Chat extends Component {
     constructor(props) {
         super(props);
@@ -16,24 +17,11 @@ class Chat extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderChatContent = this.renderChatContent.bind(this);
     }
-    componentWillMount() {
-        // if(this.props.chat.msgs.length < 1) {
-        //     this.props.startListen();    
-        // };   
-        
-    }
     componentWillReceiveProps(nextProps) {
         if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
             console.log('更新已读消息')
             this.props.updateReadMsg(this.props.match.params.userid);
         }
-    }
-    componentDidMount() {
-        if(this.props.chat.msgs.length < 1) {
-            this.props.startListen();    
-        };
-        console.log('重新渲染加载新消息')
-        
     }
     handleInput(v) {
         this.setState({
@@ -60,7 +48,6 @@ class Chat extends Component {
         msgs.forEach( v => {
             v.avatar = userid == v.from ? this.props.user.avatar : usersBook[to_id].avatar;
         }) ; 
-        const Item = List.Item; 
         let time1 = null;
         let time2 = null;
        return  (<div>
@@ -109,7 +96,7 @@ class Chat extends Component {
     render() {
         const to_id = this.props.match.params.userid;
         const users = this.props.userList.usersBook;
-
+        const Item = List.Item;
         if(!users || Object.keys(users).length === 0) {
             return null;
         };
@@ -125,16 +112,20 @@ class Chat extends Component {
             {this.renderChatContent()}
         </div>
         <div className="chat-footer">
-            <InputItem
-                value={this.state.msg}
-                placeholder="请输入"
-                onChange={v => this.handleInput(v)}
-                extra={<span onClick={this.handleSubmit}>发送</span>}
-            ></InputItem>
+            <List>
+                <Item 
+                    extra={<Button type='primary' inline size='small' onClick={this.handleSubmit}>发送</Button>}
+                >
+                    <InputItem
+                        value={this.state.msg}
+                        placeholder="请输入"
+                        type='text'
+                        onChange={v => this.handleInput(v)}
+                    ></InputItem>
+                </Item>
+            </List>
         </div>
     </div>)
-          
-
     }
 }
 export default Chat;

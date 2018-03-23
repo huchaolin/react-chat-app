@@ -15,14 +15,15 @@ class NavTabBar extends Component {
         const navList = this.props.navList.filter(v => !v.hide);
         const userid = this.props.user._id;
         const {pathname}= this.props.location;
+        const msgs = this.props.chat.msgs;
         let unReadNum = 0;
-        const msgs =  this.props.chat.msgs;
-        if(!msgs || msgs.length ==  0) {return null};
-        msgs.forEach(v => {
+        const hasGetMsgs=  this.props.chat.hasGetMsgs;
+        if(!hasGetMsgs) {return null};
+         msgs.length > 0 ? msgs.forEach(v => {
             if(v.from !== userid) {
                 !v.isRead ? unReadNum++ : null;
             }
-        });
+        }) : null;
         return (
             <TabBar>
                 {navList.map( v => <TabBar.Item

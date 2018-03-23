@@ -5,20 +5,33 @@ import {getRedirectPath} from '../utils';
 //action
 const AUTH_SUCCESS = 'AUTH_SUCCESS';
 const ERR_MSG = 'ERR_MSG';
+const LOGOUT = 'LOGOUT';
+const CHANGE_INFO = 'CHANGE_INFO';
 //reducer
-const INIT_STATE = {
+const initState = {
     user: '',
     type: '',
+    avatar: '',
+    job: '',
     msg: '',
     //跳转的路由
-    redirectTo:''
+    redirectTo:'',
+    //唯一标识
+    _id: '',
+    desc: '',
+    company: ''
+    
 };
-export function user(state = INIT_STATE, action) {
+export function user(state = initState, action) {
     switch(action.type) {
         case AUTH_SUCCESS:
             return  {...state, ...action.payload, redirectTo: getRedirectPath(action.payload), msg:''};
+        case CHANGE_INFO: 
+            return {...state, redirectTo:`/${state.type}info`}
         case ERR_MSG:
             return {...state, msg: action.msg};
+        case LOGOUT:
+            return {...initState};
         default:
             return state;
     }
@@ -28,9 +41,12 @@ function authSuccess(data) {
     return {type: AUTH_SUCCESS, payload: data};
 };
 function errorMsg(msg) {
-    msg ? Toast.info(`${msg}`, 2) : null;
+    if(msg) {Toast.info(`${msg}`, 3)};
     return {msg, type: ERR_MSG};
 };
+export function changeInfo() {
+    return {type: CHANGE_INFO};
+}
 
 export function handleLogin(data) {
     const {user, pwd} = data;
@@ -91,6 +107,9 @@ export function update(data) {
                 }
             })
     }
+};
+export function userLogout() {
+    return {type: LOGOUT};
 };
 
 export function loadData(data) {

@@ -1,26 +1,33 @@
 import io from 'socket.io-client';
 import axios from 'axios';
-import {Toast} from 'antd-mobile';
+// import {Toast} from 'antd-mobile';
 //建立socket连接  
 const socket = io('ws://localhost:9093'); 
 
 //action
 //receive message
 const RCV_MSG = 'RCV_MSG';
+const GET_MSG ='GET_MSG';
 const UPDATE_MSG = 'UPDATE_MSG';
+const LOGOUT = 'LOGOUT';
 const ERR_MSG = 'ERR_MSG';
 //initState
 const initState = {
     msgs:[],
     unRead: null,
+    hasGetMsgs: false
 }
 //reducer
 export function chat(state = initState, action) {
     switch(action.type) {
+        case GET_MSG:
+            return {...state, msgs:action.payload, hasGetMsgs: true}
         case UPDATE_MSG:
             return {...state, msgs: action.payload};
         case RCV_MSG:
             return {...state, msgs: [...state.msgs, action.payload]} ;
+        case LOGOUT:
+            return {...initState};
         case ERR_MSG:
             return {error:action.payload};
         default:
@@ -29,7 +36,9 @@ export function chat(state = initState, action) {
 }
 
 //action creater
-
+function getMsg(msgs) {
+    return {type:GET_MSG, payload:msgs}
+}
 function receiveMsg(msg) {
     return {type: RCV_MSG, payload: msg}
 };
@@ -40,7 +49,6 @@ function updateMsg(msgs) {
 
 
 function errorMsg(msg) {
-    msg ? Toast.info(`${msg}`, 2) : null;
     return {payload: msg, type: ERR_MSG};
 };
 //获取后端存储的聊天信息 
@@ -49,7 +57,7 @@ export function getMessages() {
         axios.get('/user/chatmsgs')
         .then(res => {
             if (res.status === 200 && res.data.code === 0) {
-                return dispatch(updateMsg(res.data.data))
+                return dispatch(getMsg(res.data.data))
             } else {
                 return dispatch(errorMsg(res.data.msg));
             }
@@ -105,6 +113,10 @@ export function updateReadMsg(chat_to_id) {
             };
             return v;
         });
-        dispatch(updateMsg(msgs))
+        dispatch(updateMsg(msgs));
     }
-} 
+} ;
+
+export function chatLogout() {
+    return {type: LOGOUT};
+};

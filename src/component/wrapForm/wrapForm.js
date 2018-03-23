@@ -6,7 +6,12 @@ function  WrapForm(Comp) {
             super(props);
             this.handleChange = this.handleChange.bind(this);
             this.state={
-                type:''
+                type:'',
+                avatar:'', 
+                company:'', 
+                job:'',
+                money:'',
+                desc:''
             }
         }   
         handleChange(key,val){

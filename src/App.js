@@ -1,15 +1,9 @@
 import React, {Component}from 'react';
-import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import {createStore, applyMiddleware, compose} from 'redux';
-import thunk from 'redux-thunk';
-import {Provider} from 'react-redux';
-import reducers from './reducers';
 import Login from './container/login/login';
 import Register from './container/register/register';
 import AuthRoute from './component/authRoute/authRoute';
-import BossInfo from './container/bossInfo/bossInfo';
-import GeniusInfo from './container/geniusInfo/geniusInfo';
+import UserInfo from './container/userInfo/userInfo';
 import Desk from './container/desk/desk';
 import Chat from './container/chat/chat';
 import {connect} from 'react-redux';
@@ -26,12 +20,12 @@ class App extends Component {
     componentWillReceiveProps(nextProps) {
         console.log('nextProps',nextProps)
         //防止刷新之后数据没有了
-        if(nextProps.user._id) {
-            if(nextProps.chat.msgs.length == 0 ) {
+        if(nextProps.user.type) {
+            if(!nextProps.chat.hasGetMsgs) {
                 nextProps.getMessages();
                 nextProps.startListen();    
             };   
-            if(nextProps.userList.list.length == 0) {
+            if(!nextProps.userList.hasGetUserList) {
                 nextProps.getUserList();
             };
         }
@@ -43,8 +37,8 @@ class App extends Component {
                 <div>
                     <AuthRoute></AuthRoute>
                     <Switch>
-                        <Route path='/bossinfo' component={BossInfo}></Route>
-                        <Route path='/geniusinfo' component={GeniusInfo}></Route>
+                        <Route path='/bossinfo' component={UserInfo}></Route>
+                        <Route path='/geniusinfo' component={UserInfo}></Route>
                         <Route path='/desk' component={Desk}></Route>
                         <Route path='/chat-to/:userid' component={Chat}></Route>
                         <Route path='/login' component={Login}></Route>

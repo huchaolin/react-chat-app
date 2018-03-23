@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {List, Badge, WhiteSpace} from 'antd-mobile';
+import {List, Badge} from 'antd-mobile';
 import {connect} from 'react-redux';
 import {updateReadMsg} from '../../redux/chat.redux';
 import  moment from 'moment';

@@ -1,20 +1,25 @@
 import axios from 'axios';
-import {Toast} from 'antd-mobile';
-
+// import {Toast} from 'antd-mobile';
+import {getUsersBook} from '../utils';
 const initState = {
     list: [],
-    msg: ''
+    msg: '',
+    usersBook: {},
+    hasGetUserList: false
 };
 //action
 const USER_LIST = 'USER_LIST';
 const ERR_MSG = 'ERR_MSG';
+const LOGOUT = 'LOGOUT';
 
 
 //reducer 
 export function userList(state = initState, action) {
     switch (action.type) {
         case USER_LIST:
-            return {...state, list: action.payload, usersBook: getUsersBook(action.payload), msg: ''};
+            return {...state, list: action.payload, usersBook: getUsersBook(action.payload), hasGetUserList: true, msg: ''};
+        case LOGOUT:
+            return {...initState};
         case ERR_MSG:
             return {...state, msg: action.msg}
         default:
@@ -23,7 +28,7 @@ export function userList(state = initState, action) {
 };
 //action creater
 function errorMsg(msg) {
-    msg ? Toast.info(`${msg}`, 2) : null;
+    // msg ? Toast.info(`${msg}`, 2) : null;
     return {msg, type: ERR_MSG};
 };
 
@@ -47,15 +52,6 @@ export function getUserList() {
 };
 
 
- //用户字典
- function getUsersBook(list) {
-    console.log('userList',list)
-    let usersBook = {};
-    if(list.length > 0) {
-        console.log('userList',list)
-        list.forEach(v => {
-            usersBook[v._id] = v;
-        }) 
-        return usersBook;
-    }
-}
+export function userListLogout() {
+    return {type: LOGOUT};
+};
