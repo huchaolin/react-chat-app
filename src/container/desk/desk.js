@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavBar} from 'antd-mobile';
 import {Switch, Route} from 'react-router-dom';
+import QueueAnim from 'rc-queue-anim';
 import NavTabBar from '../../component/navTabBar/navTabBar';
 import MsgList from '../../component/msgList/msgList';
 import UserList from '../../component/userList/userList';
@@ -49,18 +50,16 @@ class Desk extends Component {
                     component: Profile
                 }
             ];
+            const renderPath = navList.find( v => (v.path == pathname));
+            console.log(renderPath)
             return (
             <div>
                 <div className='desk-head'>
-                     <NavBar>{navList.find( v => (v.path == pathname)) ? navList.find( v => (v.path == pathname)).navTitle : null}</NavBar>
+                     <NavBar>{renderPath ? renderPath.navTitle : null}</NavBar>
                 </div>
                 <div className='desk-body'>
-                    <Switch>
-                        {navList.map(v=>(
-                            <Route key={v.path} path={v.path} component={v.component}></Route>
-                        ))}
-                    </Switch>
-				</div>
+                    <Route key={renderPath.path} path={renderPath.path} component={renderPath.component}></Route>
+                </div>
                 <div className="desk-footer">
                     <NavTabBar  navList={navList}></NavTabBar>
                 </div>

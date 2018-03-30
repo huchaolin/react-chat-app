@@ -1,5 +1,5 @@
 import React, {Component}from 'react';
-import ReactDOM from 'react-dom';
+import ReactDom from 'react-dom';
 import {createStore, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
@@ -19,5 +19,5 @@ class Index extends Component {
     )}
 };
 
-ReactDOM.render(<Index />, document.getElementById('root'));
+ReactDom.render(<Index />, document.getElementById('root'));
 

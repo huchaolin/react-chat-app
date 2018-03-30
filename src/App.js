@@ -11,6 +11,7 @@ import {startListen, getMessages} from './redux/chat.redux';
 import {getUserList} from './redux/userList.redux';
 import './index.css';
 import './config';
+import QueueAnim from 'rc-queue-anim';
 
 @connect(
     state => state,

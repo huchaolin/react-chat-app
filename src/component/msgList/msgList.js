@@ -69,7 +69,7 @@ class MsgList extends Component {
                                     key={i} 
                                     thumb={<div>
                                                 <div>
-                                                    <img style={{width:'40px', height:'40px'}} src={avatar}/>
+                                                    <img style={{width:'40px', height:'40px'}}  alt='' src={avatar}/>
                                                 </div>
                                                 <div style={{marginTop:'5px', 
                                                             textAlign:'center', 

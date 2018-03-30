@@ -53,15 +53,14 @@ function errorMsg(msg) {
 };
 //获取后端存储的聊天信息 
 export function getMessages() {
-    return dispatch => {
-        axios.get('/user/chatmsgs')
-        .then(res => {
-            if (res.status === 200 && res.data.code === 0) {
-                return dispatch(getMsg(res.data.data))
-            } else {
-                return dispatch(errorMsg(res.data.msg));
-            }
-        })
+    //使用async改写axios
+    return async dispatch => {
+        const res = await axios.get('/user/chatmsgs');
+        if (res.status === 200 && res.data.code === 0) {
+            return dispatch(getMsg(res.data.data))
+        } else {
+            return dispatch(errorMsg(res.data.msg));
+        }
     };
 };
 
@@ -70,10 +69,9 @@ export function handleSubmit({from, to, msg}) {
     return (dispatch, getState) => {
         //正在聊天的双方用户_id组成的唯一标识
     const chatid = [from, to].sort().join('');
-    const date = +new Date();
     const date1 = new Date();
     console.log('前端发送date',`${date1.getHours()}时${date1.getMinutes()}分${date1.getSeconds()}秒` )
-    const chatmsg = {chatid, from, to, msg, date: date, isRead: false}
+    const chatmsg = {chatid, from, to, msg, isRead: false}
     socket.emit('sendMsg', chatmsg);
     }
 }

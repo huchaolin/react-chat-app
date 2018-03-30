@@ -44,13 +44,15 @@
     z-index: 1;
 }
 .chat-body {
-    padding: 0 3px;
-    padding-top:45px;
+    padding: 45px 3px;
 }
 .chat-footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: auto;
+    height: 45px;
+  }
+  .chat-footer .am-list-content {
+      padding-top: 0;
   }
   

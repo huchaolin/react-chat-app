@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import { NavBar, Icon, List, InputItem, Button} from 'antd-mobile';
+import { NavBar, Icon, List, InputItem, Button, Toast} from 'antd-mobile';
 import {connect} from 'react-redux';
 import moment from 'moment';
-import {handleSubmit,  updateReadMsg} from '../../redux/chat.redux';
+//渐变效果动画
+import QueueAnim from 'rc-queue-anim';
+import {handleSubmit, updateReadMsg} from '../../redux/chat.redux';
 import './chat.css';
-import ListItem from 'antd-mobile/lib/list/ListItem';
 
 @connect(state => state, {handleSubmit, updateReadMsg})
 class Chat extends Component {
@@ -16,6 +17,7 @@ class Chat extends Component {
         this.handleInput = this.handleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderChatContent = this.renderChatContent.bind(this);
+        this.handleEnter  = this.handleEnter.bind(this);
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
@@ -29,11 +31,19 @@ class Chat extends Component {
         })
         console.log('this.state.msg', this.state.msg)
     }
+    handleEnter(event) {
+        event.preventDefault();
+        this.handleSubmit();
+    }
     handleSubmit() {
         console.log(' msgs', this.props.chat.msgs)
         const from = this.props.user._id;
         const to = this.props.match.params.userid;
-		const msg = this.state.msg;
+        const msg = this.state.msg;
+        const isNull = /\s+/gi;
+        if(isNull.test(msg) || msg == '') {
+            return Toast.info('请输入消息', 2);
+        }
         this.props.handleSubmit({from, to, msg});
         this.setState({msg:''});
     }
@@ -51,6 +61,7 @@ class Chat extends Component {
         let time1 = null;
         let time2 = null;
        return  (<div>
+           <QueueAnim duration={800} type='scale'>
               {msgs.map((item, index) => {
                     let showTime = false;
                     const isSelf =  item.from == userid;
@@ -91,6 +102,7 @@ class Chat extends Component {
                 })
             }
             <br />
+           </QueueAnim>
         </div>)
     }
     render() {
@@ -116,12 +128,14 @@ class Chat extends Component {
                 <Item 
                     extra={<Button type='primary' inline size='small' onClick={this.handleSubmit}>发送</Button>}
                 >
+                <form onSubmit={ event => this.handleEnter(event)}>
                     <InputItem
                         value={this.state.msg}
                         placeholder="请输入"
                         type='text'
                         onChange={v => this.handleInput(v)}
                     ></InputItem>
+                </form>
                 </Item>
             </List>
         </div>

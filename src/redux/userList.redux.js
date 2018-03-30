@@ -21,7 +21,7 @@ export function userList(state = initState, action) {
         case LOGOUT:
             return {...initState};
         case ERR_MSG:
-            return {...state, msg: action.msg}
+            return {...state, msg: action.msg};
         default:
             return state;
     };

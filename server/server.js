@@ -20,10 +20,9 @@ io.on('connection', socket => {
     socket.on('sendMsg', data => {
       let date1 = new Date();
       console.log('后端收到时间',`${date1.getHours()}时${date1.getMinutes()}分${date1.getSeconds()}秒` )
-      const {chatid, from, to, msg, date, isRead} = data;
-      Chat.create({chatid, from, to, msg, date, isRead}, (err, doc) => {
+      const {chatid, from, to, msg, isRead} = data;
+      Chat.create({chatid, from, to, msg, isRead}, (err, doc) => {
         // const {chatid, from, to, msg, date, isRead, _id} = doc;
-        console.log('doc', doc)
         let date1 = new Date();
         console.log('后端发送时间',`${date1.getHours()}时${date1.getMinutes()}分${date1.getSeconds()}秒` )
     
