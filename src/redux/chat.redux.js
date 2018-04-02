@@ -5,8 +5,7 @@ import axios from 'axios';
 const socket = io('ws://localhost:9093'); 
 
 //action
-//receive message
-const RCV_MSG = 'RCV_MSG';
+//receive message    
 const GET_MSG ='GET_MSG';
 const UPDATE_MSG = 'UPDATE_MSG';
 const LOGOUT = 'LOGOUT';
@@ -21,11 +20,9 @@ const initState = {
 export function chat(state = initState, action) {
     switch(action.type) {
         case GET_MSG:
-            return {...state, msgs:action.payload, hasGetMsgs: true}
+            return {...state, msgs: action.payload, hasGetMsgs: true}
         case UPDATE_MSG:
             return {...state, msgs: action.payload};
-        case RCV_MSG:
-            return {...state, msgs: [...state.msgs, action.payload]} ;
         case LOGOUT:
             return {...initState};
         case ERR_MSG:
@@ -39,25 +36,33 @@ export function chat(state = initState, action) {
 function getMsg(msgs) {
     return {type:GET_MSG, payload:msgs}
 }
-function receiveMsg(msg) {
-    return {type: RCV_MSG, payload: msg}
-};
 
 function updateMsg(msgs) {
     return {type: UPDATE_MSG, payload: msgs}
 };
-
 
 function errorMsg(msg) {
     return {payload: msg, type: ERR_MSG};
 };
 //获取后端存储的聊天信息 
 export function getMessages() {
+    //读取本地缓存聊天记录;
     //使用async改写axios
-    return async dispatch => {
-        const res = await axios.get('/user/chatmsgs');
+    return async (dispatch, getState) => {
+        const userid = getState().user._id;
+        const localMsgs = localStorage.getItem(`msg${userid}`) ? JSON.parse(localStorage.getItem(`msg${userid}`)) : [];
+        console.log('localMsgs',localMsgs)
+        const msgs = localMsgs.filter(v => v.isRead);
+        //self 发出的消息存储于本地，退出前显示的对方未读
+        const localUnRead = localMsgs.filter(v => {
+           return (!v.isRead) && (v.from == userid);
+        });
+        console.log('localUnRead',localUnRead)
+        //获取未读消息
+        const res = await axios.post('/user/unread-msgs', localUnRead);
         if (res.status === 200 && res.data.code === 0) {
-            return dispatch(getMsg(res.data.data))
+            const chatmsgs = [...msgs, ...res.data.data]
+            return dispatch(getMsg(chatmsgs))
         } else {
             return dispatch(errorMsg(res.data.msg));
         }
@@ -79,20 +84,50 @@ export function handleSubmit({from, to, msg}) {
 
 //开始socket 事件监听,,收到消息就更新state
 export function startListen() {
+    // socket.connect();
     return (dispatch, getState)=> {
+        const userid = getState().user._id;
+        console.log('on receiveMsg1');
         socket.on('receiveMsg', data => {
-            const date1 = new Date();
-            console.log('data', data);
-    console.log('前端收到date',`${date1.getHours()}时${date1.getMinutes()}分${date1.getSeconds()}秒` )
             
-            const userid = getState().user._id;
+            const date1 = new Date();
+            console.log('userid', userid);
+    console.log('前端收到date',`${date1.getHours()}时${date1.getMinutes()}分${date1.getSeconds()}秒` )
             let msgs = getState().chat.msgs;
-            console.log('msgs',msgs);
             const {chatid, _id} = data;
             //确保存储的聊天内容只与用户本人相关
             if(chatid.indexOf(userid) > -1) {
-            !msgs.length ? dispatch(receiveMsg(data)) : (msgs[msgs.length - 1]._id !== _id) ? dispatch(receiveMsg(data)) : null ;
-            }
+                //本地缓存聊天记录
+                if(msgs.length > 0) {
+                    msgs = msgs[msgs.length - 1]._id !== _id ? [...msgs, data] :  [...msgs];
+                } else {
+                    msgs = [...msgs, data];
+                }
+                
+            localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
+
+            dispatch(updateMsg(msgs));    
+            // !msgs.length ? dispatch(receiveMsg(data)) : (msgs[msgs.length - 1]._id !== _id) ? dispatch(receiveMsg(data)) : null ;
+            };
+        });
+        socket.on('updateRead', res => {
+            const {chatid, _id} = res.data;
+            if(!userid) {return null};
+            //确保存储的聊天内容只与用户本人相关
+            if(chatid.indexOf(userid) == -1) {
+                return;
+            };
+            if(res.code == 1) {
+                dispatch(errorMsg(res.msg));
+            };
+            const msgs =  getState().chat.msgs.map(v => {
+                if(v._id == res.data._id) {
+                    v.isRead = true;
+                };
+                return v;
+            });
+            localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
+            dispatch(updateMsg(msgs));
         })
     }
 };
@@ -101,20 +136,20 @@ export function updateReadMsg(chat_to_id) {
     return (dispatch, getState) => {
         const userid = getState().user._id;
         const chatid = [userid, chat_to_id].sort().join('');
-        const msgs = getState().chat.msgs.map(v => {
+        getState().chat.msgs.forEach(v => {
             if(v.chatid == chatid && v.from == chat_to_id) {
                 if(v.isRead == false) {
                     v.isRead = true;
                     //向后端更新isRead状态
-                    axios.post('/user/update/readmsgs', {updateRead: v}).then(res => console.log('redmsg-res',res))
-                }
+                    socket.emit('readMsg', v);
+                };
             };
-            return v;
         });
-        dispatch(updateMsg(msgs));
     }
 } ;
 
 export function chatLogout() {
+    // socket.close();
+    window.location.reload();
     return {type: LOGOUT};
 };

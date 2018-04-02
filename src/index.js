@@ -1,6 +1,7 @@
 import React, {Component}from 'react';
 import ReactDom from 'react-dom';
 import {createStore, applyMiddleware, compose} from 'redux';
+import { BrowserRouter} from 'react-router-dom';
 import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
 import reducers from './reducers';
@@ -14,7 +15,9 @@ class Index extends Component {
     render() { 
         return (
         <Provider store={store}>
+            <BrowserRouter>
                 <App />
+            </BrowserRouter>
         </Provider>
     )}
 };

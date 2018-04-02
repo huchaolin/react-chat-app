@@ -8,11 +8,19 @@ import AvatarSelector from '../../component/avatarSelector/avatarSelector';
 //暂时想合并一下 boss与mike的信息完成页面
 @WrapForm
 @connect( state => state, {update})
-class UserInfo extends Component {
+class UserInfo extends Component {         
     handleUpdate = () => {
         const isBoss = this.props.user.type == 'boss' ;
         const {avatar, company, job, money, desc} = this.props.state;
         isBoss ? this.props.update({avatar, company, job, money, desc}) : this.props.update({avatar, job, desc});
+    }
+    componentWillMount() {
+        //初始化state
+        const {avatar, company, job, money, desc} = this.props.user;
+        const info = {avatar, company, job, money, desc};
+        Object.keys(info).forEach(key => { 
+           key ? this.props.handleChange(key, info[key]) : null;
+           });
     }
     render() {
         const user = this.props.user;
@@ -21,7 +29,7 @@ class UserInfo extends Component {
         const state = this.props.state;
         return (<div>
                 <List>
-            {redirectTo && (redirectTo !== ('/bossinfo' || '/geniusinfo')) ? <Redirect to={redirectTo}></Redirect> : null}
+            {redirectTo && redirectTo !== '/bossinfo' && redirectTo !== '/geniusinfo' ? <Redirect to={redirectTo}></Redirect> : null}
                     <NavBar
                         mode="dark"
                         >{isBoss ? 'BOSS信息完善页' : '牛人信息完善页'}

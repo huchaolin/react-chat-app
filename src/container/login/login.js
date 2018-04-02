@@ -14,6 +14,11 @@ class Login extends Component {
         this.handleLogin = this.handleLogin.bind(this);
         this.handleRegister = this.handleRegister.bind(this);
     }
+    handleEnter(event) {
+        // console.log('event',event)
+        event.preventDefault();
+        this.handleLogin();
+    }
     handleLogin() {
         const {user, pwd} = this.props.state;
         this.props.handleLogin({user, pwd});
@@ -28,6 +33,7 @@ class Login extends Component {
             <AppLogo/>
             <WingBlank>
                 <List>
+                <form onSubmit={event => this.handleEnter(event)}> 
                     <InputItem placeholder="请输入用户名" 
                         onChange={ v => this.props.handleChange('user', v)}>用户名
                     </InputItem>
@@ -35,10 +41,12 @@ class Login extends Component {
                         onChange={ v => this.props.handleChange('pwd', v)}>
                         密码
                     </InputItem>
+                <button style={{display:'none'}}></button>            
+                </form>              
                 </List>
                 <Button type="primary"  onClick={this.handleLogin}>登录</Button>  
-                <WhiteSpace/>              
-                <Button type="primary"  onClick={this.handleRegister}>注册</Button>                
+                <WhiteSpace/>  
+                <Button type="primary"  onClick={this.handleRegister}>注册</Button> 
             </WingBlank>
         </div>)
     }

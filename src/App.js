@@ -1,5 +1,6 @@
+import QueueAnim from 'rc-queue-anim';
 import React, {Component}from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import {withRouter, Route, Switch } from 'react-router-dom';
 import Login from './container/login/login';
 import Register from './container/register/register';
 import AuthRoute from './component/authRoute/authRoute';
@@ -11,15 +12,15 @@ import {startListen, getMessages} from './redux/chat.redux';
 import {getUserList} from './redux/userList.redux';
 import './index.css';
 import './config';
-import QueueAnim from 'rc-queue-anim';
 
+@withRouter
 @connect(
     state => state,
     {startListen, getMessages, getUserList}
 )
 class App extends Component {
     componentWillReceiveProps(nextProps) {
-        console.log('nextProps',nextProps)
+        // console.log('nextProps',nextProps)
         //防止刷新之后数据没有了
         if(nextProps.user.type) {
             if(!nextProps.chat.hasGetMsgs) {
@@ -34,19 +35,20 @@ class App extends Component {
 
     render() {
         return (
-            <BrowserRouter>
                 <div>
                     <AuthRoute></AuthRoute>
-                    <Switch>
-                        <Route path='/bossinfo' component={UserInfo}></Route>
+                    <QueueAnim>
+                    <Switch> 
+                        <Route path='/bossinfo' component={UserInfo}></Route> */}
                         <Route path='/geniusinfo' component={UserInfo}></Route>
                         <Route path='/desk' component={Desk}></Route>
                         <Route path='/chat-to/:userid' component={Chat}></Route>
                         <Route path='/login' component={Login}></Route>
                         <Route path='/register' component={Register}></Route>
                     </Switch>
+
+                    </QueueAnim>
                 </div>
-            </BrowserRouter>
         )
     }
 }

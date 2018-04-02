@@ -17,11 +17,18 @@ class Chat extends Component {
         this.handleInput = this.handleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderChatContent = this.renderChatContent.bind(this);
-        this.handleEnter  = this.handleEnter.bind(this);
+        this.handleEnter = this.handleEnter.bind(this);
+        this.handleSeeMore = this.handleSeeMore.bind(this);
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
-            console.log('更新已读消息')
+            console.log('willReceiveProps更新已读消息')
+            this.props.updateReadMsg(this.props.match.params.userid);
+        }
+    }
+    componentDidMount() {
+        console.log('Didmount更新已读消息')
+        if (this.props.chat.msgs.length > 0) {
             this.props.updateReadMsg(this.props.match.params.userid);
         }
     }
@@ -29,23 +36,26 @@ class Chat extends Component {
         this.setState({
             msg: v
         })
-        console.log('this.state.msg', this.state.msg)
+        // console.log('this.state.msg', this.state.msg)
     }
     handleEnter(event) {
         event.preventDefault();
         this.handleSubmit();
     }
     handleSubmit() {
-        console.log(' msgs', this.props.chat.msgs)
+        // console.log(' msgs', this.props.chat.msgs)
         const from = this.props.user._id;
         const to = this.props.match.params.userid;
         const msg = this.state.msg;
-        const isNull = /\s+/gi;
+        const isNull = /^\s+$/g;
         if(isNull.test(msg) || msg == '') {
             return Toast.info('请输入消息', 2);
         }
         this.props.handleSubmit({from, to, msg});
         this.setState({msg:''});
+    }
+    handleSeeMore() {
+
     }
     renderChatContent() {
         if(!this.props.chat.msgs.length) {return null};
@@ -61,7 +71,7 @@ class Chat extends Component {
         let time1 = null;
         let time2 = null;
        return  (<div>
-           <QueueAnim duration={800} type='scale'>
+           <QueueAnim duration={600} type='bottom'>
               {msgs.map((item, index) => {
                     let showTime = false;
                     const isSelf =  item.from == userid;
@@ -88,14 +98,16 @@ class Chat extends Component {
                                 <div className="Chat-time-remindner">
                                     {moment(item.date).calendar()}
                                 </div>
-                            </div> : null }
-                            <div style= {{float:' right', width:'100%'}}>
+                            </div> : null 
+                        }
+                            <div style= {{float: 'right', width: '100%', marginBottom: '5px', position:'relative'}}>
                                <div className={`Chat-sender${isSelf ? ' self' : ''}`}>
-                                    <img style={{width:'32px'}}alt='头像' src={avatar}></img>
+                                    <img style={{width: '32px'}}alt='头像' src={avatar}></img>
                                 </div>
                                 <div className={`Chat-message${isSelf ? ' self' : ''}`}>
                                     {item.msg}
                                 </div>
+                                {isSelf ? <div className={'Chat-is-read'}> {item.isRead ? '已读' : '未读'}</div> : null}
                             </div>
                         </div>
                     );
@@ -121,6 +133,7 @@ class Chat extends Component {
             </NavBar>
         </div>   
         <div className='chat-body'>
+            <div onClick={this.handleSeeMore} className='chat-see-more'>查看更多记录</div>
             {this.renderChatContent()}
         </div>
         <div className="chat-footer">

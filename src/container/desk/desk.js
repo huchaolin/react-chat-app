@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {NavBar} from 'antd-mobile';
-import {Switch, Route} from 'react-router-dom';
-import QueueAnim from 'rc-queue-anim';
+import {Route} from 'react-router-dom';
 import NavTabBar from '../../component/navTabBar/navTabBar';
 import MsgList from '../../component/msgList/msgList';
 import UserList from '../../component/userList/userList';
@@ -51,7 +50,7 @@ class Desk extends Component {
                 }
             ];
             const renderPath = navList.find( v => (v.path == pathname));
-            console.log(renderPath)
+            // console.log(renderPath)
             return (
             <div>
                 <div className='desk-head'>

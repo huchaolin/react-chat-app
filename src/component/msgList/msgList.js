@@ -17,52 +17,53 @@ class MsgList extends Component {
         const Item = List.Item;
         const Brief = Item.Brief;
         const userid = this.props.user._id;
-        console.log('msg-userid',userid)
+        // console.log('msg-userid',userid)
         const users = this.props.userList.usersBook;
-        console.log('msg-users',users)
+        // console.log('msg-users',users)
         const  msgs = this.props.chat.msgs;
-        console.log('msg-msgs',msgs)
+        // console.log('msg-msgs',msgs)
         const msgsBook = {};
-        console.log('msg-msgsBook',msgsBook)
+        // console.log('msg-msgsBook',msgsBook)
         if(!users || msgs.length == 0) {
             console.log('msg-未获得需要数据，返回空白')
             return null
             
         };
-        console.log('msg-继续渲染')
+        // console.log('msg-继续渲染')
         
         msgs.map(v => {
-            if(v.from !== userid) {
-                    msgsBook[v.from] = msgsBook[v.from] ? [...msgsBook[v.from], v] : [v];
-            }; 
+            const chatUserId = v.from == userid ? v.to : v.from;
+            msgsBook[chatUserId] = msgsBook[chatUserId] ? [...msgsBook[chatUserId], v] : [v];
         });
-        console.log('msg-msgsBook',msgsBook)
-        for(let from in msgsBook) {
-        msgsBook[from].sort( (v1, v2) => v2.date - v1.date);
+        // console.log('msg-msgsBook',msgsBook)
+        for(let id in msgsBook) {
+        msgsBook[id].sort( (v1, v2) => v2.date - v1.date);
         };
         const msgsArr = Object.entries(msgsBook);
-        console.log('msg-msgsArr',msgsArr)
+        // console.log('msg-msgsArr',msgsArr)
         //将收到的最新消息显示在最上方
         msgsArr.sort((v1, v2) => v2[1][0].date - v1[1][0].date);
         
         return (<List>
                      {msgsArr.map((v, i) => {
-                        const from_msgs = v[1];
-                        console.log('msg-from_msgs',from_msgs)
-                        const from_id = v[0];
-                        console.log('msg-from_id',from_id)
-                        const avatar = require(`../avatarSelector/img/${users[from_id].avatar}.png`);
-                        console.log('msg-avatar',avatar)
-                        const userName = users[from_id].user;
-                        console.log('msg-userName',userName)
-                        const message = from_msgs[0].msg;
-                        const sendTime = from_msgs[0].date;
-                        console.log('msg-messags',message)
+                        const chat_msgs = v[1];
+                        // console.log('msg-chat_msgs',chat_msgs)
+                        const chat_id = v[0];
+                        // console.log('msg-chat_id',chat_id)
+                        const avatar = require(`../avatarSelector/img/${users[chat_id].avatar}.png`);
+                        // console.log('msg-avatar',avatar)
+                        const userName = users[chat_id].user;
+                        // console.log('msg-userName',userName)
+                        const message = chat_msgs[0].msg;
+                        const sendTime = chat_msgs[0].date;
+                        // console.log('msg-messags',message)
                         let unRead = 0;
-                        from_msgs.forEach(msg => {
-                                !msg.isRead ? unRead++ : null;
+                        chat_msgs.forEach(msg => {
+                                if(msg.from !== userid) {
+                                    !msg.isRead ? unRead++ : null;
+                                }
                         });
-                        console.log('msg-unread',unRead)
+                        // console.log('msg-unread',unRead)
 
                         return ( 
                             <Item   style={{marginTop:'5px'}}
@@ -79,8 +80,8 @@ class MsgList extends Component {
                                           </div>}
                                     extra={<Badge text={unRead} overflowCount={99} />}
                                     onClick={() => {
-                                        this.props.history.push(`/chat-to/${from_id}`);
-                                        this.handleClick(from_id);
+                                        this.props.history.push(`/chat-to/${chat_id}`);
+                                        this.handleClick(chat_id);
                                     }}
                                     align='middle'
                                     > <span>{message}</span>

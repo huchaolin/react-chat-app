@@ -17,10 +17,8 @@ class UserList extends Component {
         //过滤出已完善个人信息的用户
         const userList = this.props.userList.list.filter(v => v.avatar);
         return (<div className='userlist'>
-            <WingBlank>
-			    <WhiteSpace />
                 {userList ?  userList.map(v => (
-                    <Card key={v._id}
+                    <Card key={v._id} style={{marginBottom:'5px'}}
                         onClick={() => this.handleClick(v)}
                     >
                         <Header
@@ -36,7 +34,6 @@ class UserList extends Component {
                             {v.type=='boss'? <div>薪资:{v.money}</div> :null}
                         </Body>
                     </Card>)) : null}
-            </WingBlank>
             </div>)
     }
 }

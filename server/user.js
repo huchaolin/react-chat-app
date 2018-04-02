@@ -11,8 +11,7 @@ const _filter = {__v: 0, pwd: 0}
 // const utility = require('utility');
 
 userRouter.get('/test', (req, res) => {
-    User.find({}, _filter, (err, doc) =>{
-        console.log('doc',doc)
+   Chat.find({}, _filter, (err, doc) =>{
         res.json({code:0, data: doc});
     })
     // User.remove({},function(){});
@@ -86,22 +85,7 @@ userRouter.post('/update', (req, res)=> {
         })
     }    
 });
-userRouter.post('/update/readmsgs', (req, res)=> {
-    const {userid} = req.cookies;
-    const {updateRead} = req.body;
-    if(!userid) {
-        return res.json({code:1, msg: '未保存登录信息'});
-    } else {
-        Chat.findByIdAndUpdate(updateRead._id, updateRead, (err, doc) => {
-            if (err) {
-                return res.json({code: 1, msg: "后端出错"})
-            };
-            const {user, type, avatar, _id} = doc;
-            const data = {user, type, avatar, _id, ...req.body};
-            return res.json({code: 0, data});
-        })
-    }    
-});
+
 
 userRouter.get('/list', (req, res) => {
     const {userid} = req.cookies;
@@ -117,19 +101,32 @@ userRouter.get('/list', (req, res) => {
         })
     }
 });
-
-
-userRouter.get('/chatmsgs', (req, res) => {
+//用户获取未读的聊天数据；
+userRouter.post('/unread-msgs', (req, res) => {
     const {userid} = req.cookies;
+    const localUnRead = req.body;
     if(!userid) {
         return res.json({code: 1, msg: '未保存登录信息'});
     } else {
-        Chat.find({'$or': [{from:userid},{to:userid}]}, _filter, (err, doc) => {
-            if(err) {
-                return res.json({code:1, msg: '后端出错'});
-            };
-            return  res.json({code:0, data: doc});
-        })
+        const msgs = [];
+        if(localUnRead && (localUnRead.length > 0)) {
+            localUnRead.forEach( v => {
+                Chat.findById(v._id, (err, doc) => {
+                    msgs.push(doc);
+                });
+            });
+        };
+
+        const query = Chat.find({to: userid, isRead: false}, _filter);
+        query.limit(30)
+            // .sort({date: 1})
+            .exec((err, doc) => {
+                if(err) {
+                    return res.json({code:1, msg: '后端出错'});
+                };
+                const updateUnRead = [...msgs, ...doc].sort( (v1, v2) => v1.date - v2.date);
+                return  res.json({code:0, data: updateUnRead});
+            })
     }
 });
 //密码简单加密函数
