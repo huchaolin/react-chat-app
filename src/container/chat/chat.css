@@ -47,6 +47,7 @@
 }
 .chat-body {
     padding: 45px 3px;
+    overflow: auto;
 }
 .chat-footer {
     position: fixed;

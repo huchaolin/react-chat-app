@@ -13,23 +13,50 @@ class Chat extends Component {
         super(props);
         this.state = {
             msg: '',
+            pageCount: 1,
+            msgSize: 9,
+            isMore: true,
+            lastDom: null
         };
+        // //真实节点
+        this.lastMsgDom = React.createRef();
+        console.log('lastMsgDom', this.lastMsgDom)
         this.handleInput = this.handleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderChatContent = this.renderChatContent.bind(this);
         this.handleEnter = this.handleEnter.bind(this);
         this.handleSeeMore = this.handleSeeMore.bind(this);
+        this.getRenderMsgs = this.getRenderMsgs.bind(this);
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
             console.log('willReceiveProps更新已读消息')
             this.props.updateReadMsg(this.props.match.params.userid);
-        }
+        };
+        this.handleSetScrollDom(); 
     }
     componentDidMount() {
-        console.log('Didmount更新已读消息')
         if (this.props.chat.msgs.length > 0) {
             this.props.updateReadMsg(this.props.match.params.userid);
+        };
+        console.log('Didmount更新已读消息')
+    }
+    componentWillUpdate() {
+        this.handleSetScrollDom();
+    }
+    componentDidUpdate() {
+        this.handleMsgScroll();
+    }
+    handleMsgScroll() {
+        const node = this.state.lastDom;
+        node ? node.scrollIntoView() : null;
+        console.log('node', node)
+    }
+    handleSetScrollDom() {
+        //将ref没有置零前所指向的真实DOM节点存储起来
+        const node = this.lastMsgDom.current;
+        if((this.state.lastDom !== node) && node) {
+            this.setState({lastDom: node});
         }
     }
     handleInput(v) {
@@ -55,19 +82,42 @@ class Chat extends Component {
         this.setState({msg:''});
     }
     handleSeeMore() {
-
+        //增加一个判断，若消息已显示完，则pageCount不+1
+       let msgs = this.getRenderMsgs(); 
+       const pageCount = this.state.pageCount;
+       const lastMsgsCount = pageCount * this.state.msgSize;
+       if(msgs.length < lastMsgsCount) {
+          return Toast.info('没有更多聊天记录了!', 3);
+       };
+        this.setState({
+            pageCount: this.state.pageCount + 1
+        });
     }
-    renderChatContent() {
+    getRenderMsgs() {
         if(!this.props.chat.msgs.length) {return null};
         const userid = this.props.user._id;
         const to_id = this.props.match.params.userid;
         const usersBook = this.props.userList.usersBook;
         const chatid = [userid, to_id].sort().join('');
-        const msgs = this.props.chat.msgs.filter(v => v.chatid == chatid);
+        let msgs = this.props.chat.msgs.filter(v => v.chatid == chatid);
         if(!msgs.length) {return null};
         msgs.forEach( v => {
             v.avatar = userid == v.from ? this.props.user.avatar : usersBook[to_id].avatar;
         }) ; 
+        return msgs;
+    }
+    renderChatContent({inputRef}) {
+        let msgs= this.getRenderMsgs();
+        if(!msgs) {return null};
+        const userid = this.props.user._id;
+        const to_id = this.props.match.params.userid;
+        //增加查看本地聊天记录功能
+        const pageCount = this.state.pageCount;
+        const msgsCount = pageCount * this.state.msgSize;
+        //取出时间最近的的给定数目的消息记录
+        if(msgs.length > msgsCount ) {
+            msgs = msgs.reverse().slice(0, msgsCount).reverse();
+        } ;
         let time1 = null;
         let time2 = null;
        return  (<div>
@@ -84,6 +134,7 @@ class Chat extends Component {
                          time2 = msgs[index - 1].date;
                          moment(time1).subtract(3, 'minutes').isBefore(time2) ? (showTime = false) : (showTime = true);
                     };
+                  
                     return (
                         <div
                             style={{
@@ -100,7 +151,10 @@ class Chat extends Component {
                                 </div>
                             </div> : null 
                         }
-                            <div style= {{float: 'right', width: '100%', marginBottom: '5px', position:'relative'}}>
+                            <div 
+                                ref = { index == ( msgs.length - 1 ) ? inputRef : null}
+                                style= {{float: 'right', width: '100%', marginBottom: '5px', position:'relative'}}
+                                >
                                <div className={`Chat-sender${isSelf ? ' self' : ''}`}>
                                     <img style={{width: '32px'}}alt='头像' src={avatar}></img>
                                 </div>
@@ -134,7 +188,7 @@ class Chat extends Component {
         </div>   
         <div className='chat-body'>
             <div onClick={this.handleSeeMore} className='chat-see-more'>查看更多记录</div>
-            {this.renderChatContent()}
+            {this.renderChatContent({inputRef: this.lastMsgDom})}
         </div>
         <div className="chat-footer">
             <List>
