@@ -14,12 +14,18 @@ class Chat extends Component {
         this.state = {
             msg: '',
             pageCount: 1,
-            msgSize: 9,
+            msgSize: 20,
             isMore: true,
-            lastDom: null
+            lastDom: null,
+            clickSeeMore: false
         };
         // //真实节点
-        this.lastMsgDom = React.createRef();
+        // this.lastMsgDom = React.createRef();
+        this.lastMsgDom = element => {
+         if((this.state.lastDom !== element) && element && !this.state.clickSeeMore) {
+                 this.setState({lastDom: element});
+            }
+        };
         console.log('lastMsgDom', this.lastMsgDom)
         this.handleInput = this.handleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,25 +33,28 @@ class Chat extends Component {
         this.handleEnter = this.handleEnter.bind(this);
         this.handleSeeMore = this.handleSeeMore.bind(this);
         this.getRenderMsgs = this.getRenderMsgs.bind(this);
+        this.handleMsgScroll = this.handleMsgScroll.bind(this);
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
             console.log('willReceiveProps更新已读消息')
+            //避免点击查看更多消息时 scrolltoview发生两次跳跃
+            if(this.state.clickSeeMore) {
+                this.setState({clickSeeMore:false});
+            };
             this.props.updateReadMsg(this.props.match.params.userid);
         };
-        this.handleSetScrollDom(); 
     }
+   
     componentDidMount() {
         if (this.props.chat.msgs.length > 0) {
             this.props.updateReadMsg(this.props.match.params.userid);
         };
         console.log('Didmount更新已读消息')
     }
-    componentWillUpdate() {
-        this.handleSetScrollDom();
-    }
+  
     componentDidUpdate() {
-        this.handleMsgScroll();
+       this.handleMsgScroll();
     }
     handleMsgScroll() {
         const node = this.state.lastDom;
@@ -84,6 +93,12 @@ class Chat extends Component {
     handleSeeMore() {
         //增加一个判断，若消息已显示完，则pageCount不+1
        let msgs = this.getRenderMsgs(); 
+       if(!msgs) {
+        return Toast.info('没有更多聊天记录了!', 3);
+       }
+       if(!this.state.clickSeeMore) {
+           this.setState({clickSeeMore:true});
+       };
        const pageCount = this.state.pageCount;
        const lastMsgsCount = pageCount * this.state.msgSize;
        if(msgs.length < lastMsgsCount) {
@@ -110,7 +125,6 @@ class Chat extends Component {
         let msgs= this.getRenderMsgs();
         if(!msgs) {return null};
         const userid = this.props.user._id;
-        const to_id = this.props.match.params.userid;
         //增加查看本地聊天记录功能
         const pageCount = this.state.pageCount;
         const msgsCount = pageCount * this.state.msgSize;
@@ -121,7 +135,7 @@ class Chat extends Component {
         let time1 = null;
         let time2 = null;
        return  (<div>
-           <QueueAnim duration={600} type='bottom'>
+           <QueueAnim duration={450} type='bottom'>
               {msgs.map((item, index) => {
                     let showTime = false;
                     const isSelf =  item.from == userid;
