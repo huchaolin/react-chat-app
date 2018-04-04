@@ -54,7 +54,8 @@ class MsgList extends Component {
                         // console.log('msg-avatar',avatar)
                         const userName = users[chat_id].user;
                         // console.log('msg-userName',userName)
-                        const message = chat_msgs[0].msg;
+                        const who = chat_msgs[0].from == userid ? '我：' : '对方：';
+                        const message = who + chat_msgs[0].msg;
                         const sendTime = chat_msgs[0].date;
                         // console.log('msg-messags',message)
                         let unRead = 0;

@@ -23,12 +23,12 @@ class Register extends Component {
         const redirectTo = this.props.user.redirectTo;
         return (<div>
           {redirectTo && (redirectTo !== '/register') ? <Redirect to={redirectTo}></Redirect> : null}
-            <div>
+            <div style={{ position: 'fixed', width: '100%', zIndex:' 1'}}>
             <NavBar
                 mode="dark"
                 icon={<Icon type="left" />}
                 onLeftClick={() => {this.props.history.goBack()}}
-                >注册账号</NavBar>
+                >注册新用户</NavBar>
             </div>
             <AppLogo />
             <List>

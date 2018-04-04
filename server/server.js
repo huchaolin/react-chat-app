@@ -6,6 +6,8 @@ import path from 'path';
 import bodyParser from 'body-parser';
 //处理cookie
 import cookieParser from 'cookie-parser';
+//ssr
+// import pageHtml from './ssrCode.js';
 
 const app = express();
 const Chat = models.getModel('chat');
@@ -15,14 +17,16 @@ const User = models.getModel('user');
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use('/user', userRouter);
-// app.use((req, res, next) => {
-//   if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
-//     return next();
-//   };
-//   return res.sendFile(path.resolve('build/index.html'));
-// });
-// //设置静态资源的地址 
-// app.use('/',  express.static(path.resolve('build')));
+
+//新增中间件处理路径问题
+app.use((req, res, next) => {
+  if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
+    return next();
+  };
+  return res.sendFile(path.resolve('build/index.html'));
+});
+//设置静态资源的地址 
+app.use('/',  express.static(path.resolve('build')));
 
 
 

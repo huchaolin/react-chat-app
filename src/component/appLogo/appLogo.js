@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import logoImg from './job.png';
 class AppLogo extends Component {
     render() {
-        return (<div style={{margin: "30px 10px 20px", textAlign: "center"
+        return (<div style={{textAlign: "center"
         }}>
-            <img src={logoImg} alt=""></img>
+            <img src={require('./job.png')} style={{width:'100%', borderRadius:'5%'}} alt=""></img>
         </div>)
     }
 };

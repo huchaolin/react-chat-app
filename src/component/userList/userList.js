@@ -24,7 +24,7 @@ class UserList extends Component {
                         <Header
                             title={v.user}
                             thumb={require(`../avatarSelector/img/${v.avatar}.png`)}
-                            extra={<span>{v.type == 'boss' ? '招聘职位：' : '应聘职位'}{v.job}</span>}
+                            extra={<span>{v.type == 'boss' ? '招聘职位：' : '应聘职位: '}{v.job}</span>}
                         ></Header>
                         <Body>
                             {v.type == 'boss' ? <div>公司:{v.company}</div> : null}
