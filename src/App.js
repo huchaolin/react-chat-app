@@ -9,14 +9,14 @@ import Desk from './container/desk/desk';
 import Chat from './container/chat/chat';
 import {connect} from 'react-redux';
 import {startListen, getMessages} from './redux/chat.redux';
-import {getUserList} from './redux/userList.redux';
+import {getUserList, listenUpdate} from './redux/userList.redux';
 import './index.css';
 import './config';
 
 @withRouter
 @connect(
     state => state,
-    {startListen, getMessages, getUserList}
+    {startListen, getMessages, getUserList, listenUpdate}
 )
 class App extends Component {
     componentWillReceiveProps(nextProps) {
@@ -25,10 +25,11 @@ class App extends Component {
         if(nextProps.user.type) {
             if(!nextProps.chat.hasGetMsgs) {
                 nextProps.getMessages();
-                nextProps.startListen();    
+                nextProps.startListen(); 
             };   
             if(!nextProps.userList.hasGetUserList) {
                 nextProps.getUserList();
+                nextProps.listenUpdate();   
             };
         }
     }

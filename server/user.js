@@ -69,22 +69,22 @@ userRouter.post('/register', (req, res)=> {
     });
 });
 
-userRouter.post('/update', (req, res)=> {
-    const {userid} = req.cookies;
-    if(!userid) {
-        return res.json({code:1});
-    } else {
-        User.findByIdAndUpdate(userid, req.body, (err, doc) => {
-            if (err) {
-                return res.json({code: 1, msg: "后端出错"})
-            };
-            const {user, type, avatar, _id} = doc;
-            const data = {user, type, avatar, _id, ...req.body};
-            return res.json({code: 0, data});
+// userRouter.post('/update', (req, res)=> {
+//     const {userid} = req.cookies;
+//     if(!userid) {
+//         return res.json({code:1});
+//     } else {
+//         User.findByIdAndUpdate(userid, req.body, (err, doc) => {
+//             if (err) {
+//                 return res.json({code: 1, msg: "后端出错"})
+//             };
+//             const {user, type, avatar, _id} = doc;
+//             const data = {user, type, avatar, _id, ...req.body};
+//             return res.json({code: 0, data});
 
-        })
-    }    
-});
+//         })
+//     }    
+// });
 
 
 userRouter.get('/list', (req, res) => {

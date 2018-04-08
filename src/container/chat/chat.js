@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { NavBar, Icon, List, InputItem, Button, Toast} from 'antd-mobile';
+import { NavBar, Icon, List, InputItem, Button, Toast, Grid} from 'antd-mobile';
 import {connect} from 'react-redux';
 import moment from 'moment';
 //渐变效果动画
@@ -14,15 +14,17 @@ class Chat extends Component {
         this.state = {
             msg: '',
             pageCount: 1,
-            msgSize: 20,
+            msgSize: 15,
             isMore: true,
             lastDom: null,
-            clickSeeMore: false
+            clickSeeMore: false,
+            isTyping:false,
+            showEmoji:false
         };
         // //真实节点
         // this.lastMsgDom = React.createRef();
         this.lastMsgDom = element => {
-         if((this.state.lastDom !== element) && element && !this.state.clickSeeMore) {
+         if((this.state.lastDom !== element) && element && !this.state.clickSeeMore && !this.state.isTyping) {
                  this.setState({lastDom: element});
             }
         };
@@ -34,6 +36,8 @@ class Chat extends Component {
         this.handleSeeMore = this.handleSeeMore.bind(this);
         this.getRenderMsgs = this.getRenderMsgs.bind(this);
         this.handleMsgScroll = this.handleMsgScroll.bind(this);
+        this.fixCarousel = this.fixCarousel.bind(this);
+        this.handleShowEmoji = this.handleShowEmoji.bind(this);
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.chat.msgs.length !== this.props.chat.msgs.length) {
@@ -42,6 +46,9 @@ class Chat extends Component {
             if(this.state.clickSeeMore) {
                 this.setState({clickSeeMore:false});
             };
+            if(this.state.isTyping) {
+                this.setState({isTyping: false});
+            }
             this.props.updateReadMsg(this.props.match.params.userid);
         };
     }
@@ -54,23 +61,24 @@ class Chat extends Component {
     }
   
     componentDidUpdate() {
-       this.handleMsgScroll();
+        !this.state.isTyping ? this.handleMsgScroll() : null;
     }
     handleMsgScroll() {
         const node = this.state.lastDom;
         node ? node.scrollIntoView() : null;
-        console.log('node', node)
+        console.log('node',node)
     }
-    handleSetScrollDom() {
-        //将ref没有置零前所指向的真实DOM节点存储起来
-        const node = this.lastMsgDom.current;
-        if((this.state.lastDom !== node) && node) {
-            this.setState({lastDom: node});
-        }
-    }
+    // handleSetScrollDom() {
+    //     //将ref没有置零前所指向的真实DOM节点存储起来
+    //     const node = this.lastMsgDom.current;
+    //     if((this.state.lastDom !== node) && node) {
+    //         this.setState({lastDom: node});
+    //     }
+    // }
     handleInput(v) {
         this.setState({
-            msg: v
+            msg: v,
+            isTyping: true
         })
         // console.log('this.state.msg', this.state.msg)
     }
@@ -121,6 +129,17 @@ class Chat extends Component {
         }) ; 
         return msgs;
     }
+    fixCarousel(){
+        setTimeout(function(){
+            window.dispatchEvent(new Event('resize'))
+        },0)
+    }
+    handleShowEmoji() {
+        this.setState({
+            showEmoji: !this.state.showEmoji
+        });
+        this.fixCarousel();
+    }
     renderChatContent({inputRef}) {
         let msgs= this.getRenderMsgs();
         if(!msgs) {return null};
@@ -135,7 +154,7 @@ class Chat extends Component {
         let time1 = null;
         let time2 = null;
        return  (<div>
-           <QueueAnim duration={450} type='bottom'>
+           <QueueAnim duration={410} type='bottom'>
               {msgs.map((item, index) => {
                     let showTime = false;
                     const isSelf =  item.from == userid;
@@ -189,6 +208,11 @@ class Chat extends Component {
         const to_id = this.props.match.params.userid;
         const users = this.props.userList.usersBook;
         const Item = List.Item;
+        const emoji = '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😌 😍 😘 😗 😙 😚 😋 😜 😝 😛 🤑 🤗 🤓 😎 😏 😒 😞 😔 😟 😕 🙁 😣 😖 😫 😩 😤 😠 😡 😶 😐 😑 😯 😦 😧 😮 😲 😵 😳 😱 😨 😰 😢 😥 😭 😓 😪 😴 🙄 🤔 😬 🤐 😷 🤒 🤕 😈 👿 👹 👺 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 👐 🙌 👏 🙏 👍 👎 👊 ✊ 🤘 👌 👈 👉 👆 👇 ✋  🖐 🖖 👋  💪 🖕 ✍️  💅 🖖 💄 💋 👄 👅 👂 👃 👁 👀 '
+                         .split(' ')
+                         //再过滤一遍，防止有空白
+                         .filter(v => v)
+                         .map(v => ({text:v}));
         if(!users || Object.keys(users).length === 0) {
             return null;
         };
@@ -207,7 +231,10 @@ class Chat extends Component {
         <div className="chat-footer">
             <List>
                 <Item 
-                    extra={<Button type='primary' inline size='small' onClick={this.handleSubmit}>发送</Button>}
+                    extra={<div>
+                        <span onClick={this.handleShowEmoji}>😃</span>
+                        <Button type='primary' inline size='small' onClick={this.handleSubmit}>发送</Button>
+                    </div>}
                 >
                 <form onSubmit={ event => this.handleEnter(event)}>
                     <InputItem
@@ -218,6 +245,18 @@ class Chat extends Component {
                     ></InputItem>
                 </form>
                 </Item>
+                {this.state.showEmoji ? <Item> 
+                    <Grid 
+						data={emoji}
+						columnNum={9}
+						carouselMaxRow={4}
+						isCarousel={true}
+						onClick={v => {
+							this.setState({
+								msg:this.state.msg + v.text
+							})}}
+                    />
+                </Item> : null}
             </List>
         </div>
     </div>)

@@ -1,6 +1,8 @@
 import axios from 'axios';
 // import {Toast} from 'antd-mobile';
 import {getUsersBook} from '../utils';
+import {socket} from './chat.redux.js';
+console.log('socket', socket)
 const initState = {
     list: [],
     msg: '',
@@ -32,7 +34,7 @@ function errorMsg(msg) {
     return {msg, type: ERR_MSG};
 };
 
-function updateUserList(data) {
+export function updateUserList(data) {
     return {type: USER_LIST, payload: data}
 };
 
@@ -55,3 +57,30 @@ export function getUserList() {
 export function userListLogout() {
     return {type: LOGOUT};
 };
+
+
+//有用户更新资料时需要更新userList
+export function listenUpdate() {
+    return (dispatch, getState) => {
+        console.log('建立资料更新监听')
+        const userType = getState().user.type;
+        socket.on('updateUserList', data => {
+            console.log('收到更新')
+            const updateType = data.type;
+            if(userType !== updateType) {
+                let isNewUser = true;
+                let users = getState().userList.list.map( v => {
+                    if(v._id == data._id) {
+                        isNewUser = false;
+                        return data;
+                    };
+                    return v;
+                });
+                if(isNewUser) {
+                    users = [...users, data];
+                }
+                dispatch(updateUserList(users));
+            }
+        })
+    }
+}

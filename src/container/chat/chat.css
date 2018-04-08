@@ -56,7 +56,13 @@
     height: 45px;
   }
   .chat-footer .am-list-content {
-      padding: 0!important;
+      padding-top: 0!important;
+  }
+  .chat-footer .emoji-toggle {
+    display: inline-block;
+    vertical-align: top;
+    height: 45px;
+    padding: 3px;
   }
   .chat-see-more {
     text-align: center;

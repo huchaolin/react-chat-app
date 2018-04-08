@@ -44,8 +44,9 @@ class Profile extends Component {
 					img={<img src={require(`../avatarSelector/img/${user.avatar}.png`)} style={{width:50}} alt="" />}
 					title={user.user}
 					message={user.type == 'boss' ? user.company : null}
-					buttonText={<Button type='ghost' inline size='small' >修改资料</Button>}
+					buttonText={<div className='vertical-adjust'>修改资料</div>}
 					onButtonClick={this.changeInfo}
+					buttonType='button'
 				/>
 				<List renderHeader={() => <span>简介</span>}>
 					<Item

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Toast} from 'antd-mobile';
+// import {Toast} from 'antd-mobile';
 import {getRedirectPath} from '../utils';
 
 //action
@@ -41,7 +41,6 @@ function authSuccess(data) {
     return {type: AUTH_SUCCESS, payload: data};
 };
 function errorMsg(msg) {
-    if(msg) {Toast.info(`${msg}`, 3)};
     return {msg, type: ERR_MSG};
 };
 export function changeInfo() {
@@ -82,10 +81,10 @@ export function handleRegister(data) {
     axios.post('/user/register', {user, pwd, type})
         .then( res => {
             if( res.status === 200 && res.data.code === 0) {
-                dispatch(authSuccess(res.data.data));
+                 dispatch(authSuccess(res.data.data));
             }
             else {
-                dispatch(errorMsg(res.data.msg));
+                 dispatch(errorMsg(res.data.msg));
             }
         })
     }

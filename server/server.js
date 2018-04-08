@@ -18,15 +18,15 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use('/user', userRouter);
 
-//新增中间件处理路径问题
-app.use((req, res, next) => {
-  if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
-    return next();
-  };
-  return res.sendFile(path.resolve('build/index.html'));
-});
-//设置静态资源的地址 
-app.use('/',  express.static(path.resolve('build')));
+// //新增中间件处理路径问题
+// app.use((req, res, next) => {
+//   if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
+//     return next();
+//   };
+//   return res.sendFile(path.resolve('build/index.html'));
+// });
+// //设置静态资源的地址 
+// app.use('/',  express.static(path.resolve('build')));
 
 
 
@@ -53,6 +53,25 @@ io.on('connection', socket => {
         io.emit('updateRead', {code: 0, data: doc1});
       });
    });
+   // 及时更新用户列表的信息
+   app.post('/user/update', (req, res)=> {
+     console.log('更新资料')
+        const {userid} = req.cookies;
+        if(!userid) {
+            return res.json({code:1});
+        } else {
+            User.findByIdAndUpdate(userid, req.body, (err, doc) => {
+                if (err) {
+                    return res.json({code: 1, msg: "后端出错"})
+                };
+                const {user, type, avatar, _id} = doc;
+                const data = {user, type, avatar, _id, ...req.body};
+                console.log('广播更新')
+                io.emit('updateUserList', data);
+                return res.json({code: 0, data});
+            })
+        }    
+    });
 });
 
 

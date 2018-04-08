@@ -1,8 +1,7 @@
 import io from 'socket.io-client';
 import axios from 'axios';
-// import {Toast} from 'antd-mobile';
 //建立socket连接  
-const socket = io('ws://localhost:9093'); 
+export const socket = io('ws://localhost:9093'); 
 
 //action
 //receive message    
@@ -82,12 +81,11 @@ export function handleSubmit({from, to, msg}) {
 }
 
 
-//开始socket 事件监听,,收到消息就更新state
+//开始socket 事件监听,收到消息就更新state
 export function startListen() {
     // socket.connect();
     return (dispatch, getState)=> {
         const userid = getState().user._id;
-        console.log('on receiveMsg1');
         socket.on('receiveMsg', data => {
             
             const date1 = new Date();
@@ -153,3 +151,5 @@ export function chatLogout() {
     window.location.reload();
     return {type: LOGOUT};
 };
+
+

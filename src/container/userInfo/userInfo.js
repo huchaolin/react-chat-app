@@ -5,7 +5,7 @@ import {NavBar, WingBlank, InputItem, TextareaItem, List, Button} from 'antd-mob
 import {update} from '../../redux/user.redux';
 import WrapForm from '../../component/wrapForm/wrapForm';
 import AvatarSelector from '../../component/avatarSelector/avatarSelector';
-//暂时想合并一下 boss与mike的信息完成页面
+//合并 boss与genius的信息完成页面
 @WrapForm
 @connect( state => state, {update})
 class UserInfo extends Component {         

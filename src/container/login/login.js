@@ -30,8 +30,8 @@ class Login extends Component {
         const redirectTo = this.props.user.redirectTo;
           return (<div>
             {redirectTo && (redirectTo !== '/login') ? <Redirect to={redirectTo}></Redirect> : null}
-            <AppLogo/>
             <WingBlank>
+            <AppLogo/>
                 <List>
                 <form onSubmit={event => this.handleEnter(event)}> 
                     <InputItem placeholder="请输入用户名" 
