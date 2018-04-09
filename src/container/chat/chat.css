@@ -104,3 +104,6 @@
         font-size: 15px!important   ;
         margin-top: -5px!important;
   }
+  .chat-footer .am-input-control>input{
+      height: 45px;
+  }
