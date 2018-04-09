@@ -56,7 +56,6 @@ io.on('connection', socket => {
    });
    // 及时更新用户列表的信息
    app.post('/user/update', (req, res)=> {
-     console.log('更新资料')
         const {userid} = req.cookies;
         if(!userid) {
             return res.json({code:1});
@@ -67,7 +66,6 @@ io.on('connection', socket => {
                 };
                 const {user, type, avatar, _id} = doc;
                 const data = {user, type, avatar, _id, ...req.body};
-                console.log('广播更新')
                 io.emit('updateUserList', data);
                 return res.json({code: 0, data});
             })

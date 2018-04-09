@@ -15,7 +15,7 @@ userRouter.get('/test', (req, res) => {
         res.json({code:0, data: doc});
     })
     // User.remove({},function(){});
-    // Chat.remove({}, function(){});
+    Chat.remove({}, function(){});
 });
 
 

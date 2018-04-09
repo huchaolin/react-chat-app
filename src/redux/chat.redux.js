@@ -50,18 +50,20 @@ export function getMessages() {
     return async (dispatch, getState) => {
         const userid = getState().user._id;
         const localMsgs = localStorage.getItem(`msg${userid}`) ? JSON.parse(localStorage.getItem(`msg${userid}`)) : [];
-        console.log('localMsgs',localMsgs)
         const msgs = localMsgs.filter(v => v.isRead);
         //self 发出的消息存储于本地，退出前显示的对方未读
         const localUnRead = localMsgs.filter(v => {
            return (!v.isRead) && (v.from == userid);
         });
-        console.log('localUnRead',localUnRead)
         //获取未读消息
         const res = await axios.post('/user/unread-msgs', localUnRead);
         if (res.status === 200 && res.data.code === 0) {
-            const chatmsgs = [...msgs, ...res.data.data]
-            return dispatch(getMsg(chatmsgs))
+            const chatmsgs = [...msgs, ...res.data.data];
+            if(chatmsgs.length !== 0) {
+                localStorage.setItem(`msg${userid}`, JSON.stringify(chatmsgs));
+                return dispatch(getMsg(chatmsgs));
+            };
+            return null;
         } else {
             return dispatch(errorMsg(res.data.msg));
         }
@@ -89,7 +91,6 @@ export function startListen() {
         socket.on('receiveMsg', data => {
             
             const date1 = new Date();
-            console.log('userid', userid);
     console.log('前端收到date',`${date1.getHours()}时${date1.getMinutes()}分${date1.getSeconds()}秒` )
             let msgs = getState().chat.msgs;
             const {chatid, _id} = data;
@@ -103,7 +104,6 @@ export function startListen() {
                 }
                 
             localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
-
             dispatch(updateMsg(msgs));    
             // !msgs.length ? dispatch(receiveMsg(data)) : (msgs[msgs.length - 1]._id !== _id) ? dispatch(receiveMsg(data)) : null ;
             };
@@ -125,6 +125,7 @@ export function startListen() {
                 return v;
             });
             localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
+            
             dispatch(updateMsg(msgs));
         })
     }
