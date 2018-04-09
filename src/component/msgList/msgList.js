@@ -26,9 +26,11 @@ class MsgList extends Component {
         // console.log('msg-msgsBook',msgsBook)
         if(!users || msgs.length == 0) {
             console.log('msg-未获得需要数据，返回空白')
-            return null
+            return <div style={{textAlign: 'center',
+                                color: '#b7b7b7',
+                                paddingTop: '50px'}}>(。・∀・)ノ 暂未收到任何消息</div>
             
-        };
+            };
         // console.log('msg-继续渲染')
         
         msgs.map(v => {

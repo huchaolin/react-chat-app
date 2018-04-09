@@ -19,14 +19,15 @@ app.use(bodyParser.json());
 app.use('/user', userRouter);
 
 // //新增中间件处理路径问题
-// app.use((req, res, next) => {
-//   if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
-//     return next();
-//   };
-//   return res.sendFile(path.resolve('build/index.html'));
-// });
+app.use((req, res, next) => {
+  if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
+    return next();
+  };
+  return res.sendFile(path.resolve('build/index.html'));
+//   return res.sendFile(pageHtml);
+});
 // //设置静态资源的地址 
-// app.use('/',  express.static(path.resolve('build')));
+app.use('/',  express.static(path.resolve('build')));
 
 
 

@@ -136,7 +136,8 @@ class Chat extends Component {
     }
     handleShowEmoji() {
         this.setState({
-            showEmoji: !this.state.showEmoji
+            showEmoji: !this.state.showEmoji,
+            isTyping: true
         });
         this.fixCarousel();
     }
@@ -216,6 +217,7 @@ class Chat extends Component {
         if(!users || Object.keys(users).length === 0) {
             return null;
         };
+        const showEmoji = this.state.showEmoji;
         return (<div>    
         <div className='chat-head'>
             <NavBar
@@ -231,8 +233,8 @@ class Chat extends Component {
         <div className="chat-footer">
             <List>
                 <Item 
-                    extra={<div>
-                        <span onClick={this.handleShowEmoji}>😃</span>
+                    extra={<div className='input-right-style'>
+                        <div className='emoji-toggle' onClick={this.handleShowEmoji}>😃</div>
                         <Button type='primary' inline size='small' onClick={this.handleSubmit}>发送</Button>
                     </div>}
                 >
@@ -245,19 +247,18 @@ class Chat extends Component {
                     ></InputItem>
                 </form>
                 </Item>
-                {this.state.showEmoji ? <Item> 
-                    <Grid 
-						data={emoji}
-						columnNum={9}
-						carouselMaxRow={4}
-						isCarousel={true}
-						onClick={v => {
-							this.setState({
-								msg:this.state.msg + v.text
-							})}}
-                    />
-                </Item> : null}
             </List>
+            {showEmoji ? <Grid 
+                data={emoji}
+                columnNum={9}
+                carouselMaxRow={4}
+                isCarousel={true}
+                onClick={v => {
+                    this.setState({
+                        msg:this.state.msg + v.text,
+                        isTyping: true
+                    })}}
+                /> : null}
         </div>
     </div>)
     }

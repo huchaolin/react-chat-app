@@ -53,19 +53,10 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 45px;
   }
-  .chat-footer .am-list-content {
-      padding-top: 0!important;
-  }
-  .chat-footer .emoji-toggle {
-    display: inline-block;
-    vertical-align: top;
-    height: 45px;
-    padding: 3px;
-  }
+
   .chat-see-more {
-    text-align: center;
+      text-align: center;
     width: 100%;
     padding: 10px;
     height: 30px;
@@ -73,7 +64,7 @@
     font-size: 13px;
     color: rgb(170, 170, 170);
     z-index: 1;
-  }
+}
 
 .Chat-is-read {
     color: rgb(185, 184, 184);
@@ -82,5 +73,34 @@
     float: right;
     font-size: 13px;
 }
+.chat-footer .am-list-line, .chat-footer .am-list-content, .chat-footer .am-list-extra{
+    height:45px;
+}
 
- 
+.chat-footer .am-list-content,  .chat-footer .am-list-extra {
+    padding: 0!important;
+}
+.chat-footer .input-right-style {
+    height:45px;
+    position: relative;
+
+}
+.chat-footer .input-right-style::before {
+    content: " ";
+    display: inline-block;
+    height: 100%;
+    width: 1%;
+    vertical-align: middle;
+  }
+  .chat-footer .emoji-toggle {
+      display: inline-block;
+      vertical-align: middle;
+      padding: 3px;
+  }
+  .chat-footer .am-button {
+    vertical-align: middle;
+  }
+  .chat-footer .am-grid-text {
+        font-size: 15px!important   ;
+        margin-top: -5px!important;
+  }

@@ -3,7 +3,7 @@ import csshook from 'css-modules-require-hook/preset';
 csshook({
     generateScopedName: '[name]__[local]___[hash:base64:5]',
   });
-处理服务端图片
+// 处理服务端图片
 import assethook from 'asset-require-hook';
 assethook({
     extensions:['png'],
@@ -20,6 +20,7 @@ import {renderToString} from 'react-dom/server'
 import reducers from '../src/reducers';
 import App from '../src/App';
 import staticPath from '../build/asset-manifest.json';
+
 
 const store = createStore(reducers,
 	applyMiddleware(thunk));
