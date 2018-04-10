@@ -65,7 +65,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "server": "set NODE_ENV=test&&nodemon server/server.js --exec babel-node --presets env,stage-2",
+    "server_bak": "set NODE_ENV=test&&nodemon server/server.js --exec babel-node --presets env,stage-2",
+    "server": "set NODE_ENV=test&&babel-node server/server.js --presets env,stage-2",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "build_server": "export NODE_ENV=production&&babel server -d dist --presets env,stage-2",

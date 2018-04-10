@@ -102,33 +102,35 @@ userRouter.get('/list', (req, res) => {
     }
 });
 //用户获取未读的聊天数据；
-userRouter.post('/unread-msgs', (req, res) => {
+userRouter.post('/unread-msgs', async (req, res) => {
     const {userid} = req.cookies;
     const localUnRead = req.body;
+    console.log('localUnRead', localUnRead)
     if(!userid) {
         return res.json({code: 1, msg: '未保存登录信息'});
     } else {
         const msgs = [];
         if(localUnRead && (localUnRead.length > 0)) {
-            localUnRead.forEach( v => {
-                Chat.findById(v._id, (err, doc) => {
+            for (let v of localUnRead) {
+                await Chat.findById(v._id,  (err, doc) => {
                     msgs.push(doc);
                 });
-            });
+            }
         };
-
         const query = Chat.find({to: userid, isRead: false}, _filter);
         query.limit(30)
-            // .sort({date: 1})
-            .exec((err, doc) => {
-                if(err) {
-                    return res.json({code:1, msg: '后端出错'});
-                };
+        // .sort({date: 1})
+        .exec((err, doc) => {
+            if(err) {
+                return res.json({code:1, msg: '后端出错'});
+            };
+              console.log('msgs',msgs)
                 const updateUnRead = [...msgs, ...doc].sort( (v1, v2) => v1.date - v2.date);
-                return  res.json({code:0, data: updateUnRead});
-            })
+                console.log('updateUnRead',updateUnRead)
+                return res.json({code:0, data: updateUnRead});
+        });
     }
-});
+}); 
 //密码简单加密函数
 // function md5Pwd(pwd) {
 //     const salt = 'sfnkjdsg_wqr917463265%……%&*197GFYAGK@4362988723em￥……%%&';

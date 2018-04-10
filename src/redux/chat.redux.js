@@ -57,10 +57,12 @@ export function getMessages() {
         const localUnRead = localMsgs.filter(v => {
            return (!v.isRead) && (v.from == userid);
         });
+        console.log('localUnRead',localUnRead)
         //获取未读消息
         const res = await axios.post('/user/unread-msgs', localUnRead);
         if (res.status === 200 && res.data.code === 0) {
             const chatmsgs = [...msgs, ...res.data.data];
+            console.log('getmessage-chatmsgs', chatmsgs)
             //判断条件用于修复消息条数被重置为更少条数的情况
             if(chatmsgs.length >= localMsgs.length) {
                 localStorage.setItem(`msg${userid}`, JSON.stringify(chatmsgs));
@@ -68,7 +70,7 @@ export function getMessages() {
 
                 return dispatch(getMsg(chatmsgs));
             };
-            return null;
+            return dispatch(getMsg(localMsgs));
         } else {
             return dispatch(errorMsg(res.data.msg));
         }
@@ -102,16 +104,7 @@ export function startListen() {
             //确保存储的聊天内容只与用户本人相关
             if(chatid.indexOf(userid) > -1) {
                 //本地缓存聊天记录
-            //     if(msgs.length > 0) {
-            //         msgs = msgs[msgs.length - 1]._id !== _id ? [...msgs, data] :  [...msgs];
-            //     } else {
-            //         msgs = [...msgs, data];
-            //     }
-                
-            // localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
-            // dispatch(updateMsg(msgs));    
-            // !msgs.length ? dispatch(updateMsg(data)) : (msgs[msgs.length - 1]._id !== _id) ? dispatch(updateMsg) : null ;
-                if(msgs.length == 0) {
+                    if(msgs.length == 0) {
                     msgs = [data];
                     dispatch(updateMsg([data]));
                     localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
