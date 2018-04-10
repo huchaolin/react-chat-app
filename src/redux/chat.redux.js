@@ -1,7 +1,8 @@
 import io from 'socket.io-client';
 import axios from 'axios';
 //建立socket连接  
-export const socket = io('ws://localhost:9093'); 
+// export const socket = io('ws://localhost:9093'); 
+export const socket = io(); 
 
 //action
 //receive message    

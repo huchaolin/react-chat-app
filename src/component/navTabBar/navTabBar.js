@@ -18,12 +18,13 @@ class NavTabBar extends Component {
         const msgs = this.props.chat.msgs;
         let unReadNum = 0;
         const hasGetMsgs=  this.props.chat.hasGetMsgs;
-        if(!hasGetMsgs) {return null};
-         msgs.length > 0 ? msgs.forEach(v => {
-            if(v.from !== userid) {
-                !v.isRead ? unReadNum++ : null;
-            }
-        }) : null;
+        if(hasGetMsgs) {
+            msgs.length > 0 ? msgs.forEach(v => {
+               if(v.from !== userid) {
+                   !v.isRead ? unReadNum++ : null;
+               }
+           }) : null;
+        }
         return (
             <TabBar>
                 {navList.map( v => <TabBar.Item
