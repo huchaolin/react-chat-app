@@ -10,7 +10,7 @@ const _filter = {__v: 0, pwd: 0}
 //密码简单加密,使密码不明文存储
 // const utility = require('utility');
 
-userRouter.get('/test', (req, res) => {
+userRouter.get('/delete-msgs', (req, res) => {
    Chat.find({}, _filter, (err, doc) =>{
         res.json({code:0, data: doc});
     })

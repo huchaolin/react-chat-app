@@ -1,9 +1,9 @@
 import io from 'socket.io-client';
 import axios from 'axios';
 //建立socket连接  
-// export const socket = io('ws://localhost:9093'); 
-export const socket = io(); 
-
+export const socket = io(`ws://${window.location.hostname}:9093`); 
+console.log("window.location.hostname",window.location.hostname)
+console.log('socket',socket)
 //action
 //receive message    
 const GET_MSG ='GET_MSG';
