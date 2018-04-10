@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use('/user', userRouter);
 
-// //新增中间件处理路径问题
+// //新增中间件处理路径问题,用于上线
 app.use((req, res, next) => {
   if(req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
     return next();

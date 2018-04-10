@@ -50,6 +50,7 @@ export function getMessages() {
     return async (dispatch, getState) => {
         const userid = getState().user._id;
         const localMsgs = localStorage.getItem(`msg${userid}`) ? JSON.parse(localStorage.getItem(`msg${userid}`)) : [];
+        console.log('localMsgs',localMsgs)
         const msgs = localMsgs.filter(v => v.isRead);
         //self 发出的消息存储于本地，退出前显示的对方未读
         const localUnRead = localMsgs.filter(v => {
@@ -59,8 +60,11 @@ export function getMessages() {
         const res = await axios.post('/user/unread-msgs', localUnRead);
         if (res.status === 200 && res.data.code === 0) {
             const chatmsgs = [...msgs, ...res.data.data];
-            if(chatmsgs.length !== 0) {
+            //判断条件用于修复消息条数被重置为更少条数的情况
+            if(chatmsgs.length >= localMsgs.length) {
                 localStorage.setItem(`msg${userid}`, JSON.stringify(chatmsgs));
+                console.log('getmessage-setItem', chatmsgs)
+
                 return dispatch(getMsg(chatmsgs));
             };
             return null;
@@ -97,15 +101,26 @@ export function startListen() {
             //确保存储的聊天内容只与用户本人相关
             if(chatid.indexOf(userid) > -1) {
                 //本地缓存聊天记录
-                if(msgs.length > 0) {
-                    msgs = msgs[msgs.length - 1]._id !== _id ? [...msgs, data] :  [...msgs];
-                } else {
-                    msgs = [...msgs, data];
-                }
+            //     if(msgs.length > 0) {
+            //         msgs = msgs[msgs.length - 1]._id !== _id ? [...msgs, data] :  [...msgs];
+            //     } else {
+            //         msgs = [...msgs, data];
+            //     }
                 
-            localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
-            dispatch(updateMsg(msgs));    
-            // !msgs.length ? dispatch(receiveMsg(data)) : (msgs[msgs.length - 1]._id !== _id) ? dispatch(receiveMsg(data)) : null ;
+            // localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
+            // dispatch(updateMsg(msgs));    
+            // !msgs.length ? dispatch(updateMsg(data)) : (msgs[msgs.length - 1]._id !== _id) ? dispatch(updateMsg) : null ;
+                if(msgs.length == 0) {
+                    msgs = [data];
+                    dispatch(updateMsg([data]));
+                    localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
+                    console.log('receive-setItem', msgs)     
+                } else if((msgs[msgs.length - 1]._id !== _id) ) {
+                    msgs = [...msgs, data];
+                    dispatch(updateMsg(msgs));
+                    localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
+                    console.log('receive-setItem', msgs)                
+                };
             };
         });
         socket.on('updateRead', res => {
@@ -125,7 +140,7 @@ export function startListen() {
                 return v;
             });
             localStorage.setItem(`msg${userid}`, JSON.stringify(msgs));
-            
+            console.log('updateRead-setItem', msgs) 
             dispatch(updateMsg(msgs));
         })
     }
