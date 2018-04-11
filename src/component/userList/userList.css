@@ -4,3 +4,7 @@
     white-space: nowrap;
     color: #888;
 }
+.userlist .am-card-body {
+    max-height: 200px;
+    overflow: auto;
+}

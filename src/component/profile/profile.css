@@ -27,3 +27,10 @@
     bottom: 80px;
     width: 100%;
 }
+.profile-intro .am-list-content, .profile-intro .am-list-brief {
+    white-space: normal!important;
+} 
+.profile-intro .am-list-body {
+    height: 250px;
+    overflow: auto;
+}

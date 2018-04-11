@@ -48,6 +48,7 @@ class Profile extends Component {
 					onButtonClick={this.changeInfo}
 					buttonType='button'
 				/>
+				<div className='profile-intro'>
 				<List renderHeader={() => <span>简介</span>}>
 					<Item
 						multipleLine
@@ -57,14 +58,11 @@ class Profile extends Component {
 						{user.money ? <Brief>薪资:{user.money}</Brief>:null}
 					</Item>
 				</List>
+				</div>
 				<WhiteSpace></WhiteSpace>
-				<div className='logout'>
-					<List>
 					<WingBlank>
 							<Button  type='primary'  onClick={this.logout}>退出登录</Button>
 					</WingBlank>
-					</List>
-				</div>
 			</div>);
 	}
 }

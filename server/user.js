@@ -105,13 +105,13 @@ userRouter.get('/list', (req, res) => {
 userRouter.post('/unread-msgs', async (req, res) => {
     const {userid} = req.cookies;
     const localUnRead = req.body;
-    console.log('localUnRead', localUnRead)
     if(!userid) {
         return res.json({code: 1, msg: '未保存登录信息'});
     } else {
         const msgs = [];
         if(localUnRead && (localUnRead.length > 0)) {
             for (let v of localUnRead) {
+                //使用let of + await实现异步调用按循序执行
                 await Chat.findById(v._id,  (err, doc) => {
                     msgs.push(doc);
                 });
@@ -124,10 +124,14 @@ userRouter.post('/unread-msgs', async (req, res) => {
             if(err) {
                 return res.json({code:1, msg: '后端出错'});
             };
-              console.log('msgs',msgs)
-                const updateUnRead = [...msgs, ...doc].sort( (v1, v2) => v1.date - v2.date);
-                console.log('updateUnRead',updateUnRead)
-                return res.json({code:0, data: updateUnRead});
+                const updateUnRead = [...msgs, ...doc].filter( v => v);
+                if(updateUnRead.length == 0 ) {
+                    return res.json({code:0, data: []});
+                }
+                else {
+                    updateUnRead.sort( (v1, v2) => v1.date - v2.date);
+                    return res.json({code:0, data: updateUnRead});
+                }
         });
     }
 }); 

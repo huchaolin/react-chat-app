@@ -61,7 +61,7 @@ export function getMessages() {
         //获取未读消息
         const res = await axios.post('/user/unread-msgs', localUnRead);
         if (res.status === 200 && res.data.code === 0) {
-            const chatmsgs = [...msgs, ...res.data.data];
+            const chatmsgs = [...msgs, ...res.data.data].filter(v => v);
             console.log('getmessage-chatmsgs', chatmsgs)
             //判断条件用于修复消息条数被重置为更少条数的情况
             if(chatmsgs.length >= localMsgs.length) {
